@@ -8,6 +8,7 @@
 #include "Settings.h"
 #include "InputHelper.h"
 #include "editor.h"
+#include "Assets.h"
 
 using namespace GigaGra;
 
@@ -32,6 +33,7 @@ int main() {
 
     g.window = &window;
 
+    assets = new Assets{};
     settings = new Settings{};
     ui = new UI{};
 	menu = new Menu{};
@@ -104,6 +106,7 @@ int main() {
         InputHelper::afterFrame();
     }
 
+    delete assets;
 	delete ui;
     delete settings;
     delete menu;

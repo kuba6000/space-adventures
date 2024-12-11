@@ -1,21 +1,20 @@
 #include "game.h"
 #include "globals.h"
+#include "Assets.h"
 namespace GigaGra {
 	Game::Game()
 	{
 		gameView = g.window->getDefaultView();
 
 		// load textures
-		grassTexture.loadFromFile("assets\\grass.png");
-		stoneTexture.loadFromFile("assets\\stone.png");
-		ziomalTexture.loadFromFile("assets\\ziomal.png");
+		
 
 		ziomalPos = { 200.f, 200.f };
-		ziomalSprite.setTexture(ziomalTexture);
+		ziomalSprite.setTexture(assets->ziomalTexture);
 		ziomalSprite.setScale(5.f, 5.f);
 
-		grassSprite.setTexture(grassTexture);
-		stoneSprite.setTexture(stoneTexture);
+		grassSprite.setTexture(assets->grassTexture);
+		stoneSprite.setTexture(assets->stoneTexture);
 	}
 	Game::~Game()
 	{

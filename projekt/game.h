@@ -15,9 +15,7 @@ namespace GigaGra {
 		sf::Sprite ziomalSprite{};
 		sf::Vector2f ziomalPos{};
 
-		sf::Texture ziomalTexture{};
-		sf::Texture grassTexture{};
-		sf::Texture stoneTexture{};
+		
 		sf::Sprite grassSprite{};
 		sf::Sprite stoneSprite{};
 	};

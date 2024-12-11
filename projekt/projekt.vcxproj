@@ -135,22 +135,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AluminiumFloor.cpp" />
+    <ClCompile Include="AluminiumWall.cpp" />
+    <ClCompile Include="Assets.cpp" />
     <ClCompile Include="editor.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="Grass.cpp" />
     <ClCompile Include="InputHelper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Stone.cpp" />
+    <ClCompile Include="Tile.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AluminiumFloor.h" />
+    <ClInclude Include="AluminiumWall.h" />
+    <ClInclude Include="Assets.h" />
     <ClInclude Include="editor.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="Grass.h" />
     <ClInclude Include="InputHelper.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="Stone.h" />
+    <ClInclude Include="Tile.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

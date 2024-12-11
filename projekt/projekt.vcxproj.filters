@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Pliki źródłowe\GameElement">
+      <UniqueIdentifier>{efd24518-dc0d-4aad-91a4-915fb64922f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\GameElement\Tile">
+      <UniqueIdentifier>{d1be23b1-cad4-48bf-8259-3263dec87d85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -39,6 +45,24 @@
     <ClCompile Include="editor.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="Assets.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Grass.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Stone.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="AluminiumWall.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="AluminiumFloor.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="menu.h">
@@ -63,6 +87,24 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="editor.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Grass.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Stone.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="AluminiumWall.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="AluminiumFloor.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
