@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Tile.h"
 
 namespace GigaGra {
 	class Game
@@ -12,12 +13,10 @@ namespace GigaGra {
 		void render(float frame_delta);
 	private:
 		sf::View gameView;
-		sf::Sprite ziomalSprite{};
-		sf::Vector2f ziomalPos{};
+		sf::Sprite playerSprite{};
+		sf::Vector2f playerPos{};
 
-		
-		sf::Sprite grassSprite{};
-		sf::Sprite stoneSprite{};
+		Tile* map[1000][1000]{};
 	};
 	extern Game *game;
 }

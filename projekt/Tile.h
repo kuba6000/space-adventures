@@ -11,7 +11,7 @@ namespace GigaGra{
 		virtual void draw(int x, int y, float frame_delta);
 		virtual Tile* clone() const = 0;
 
-		
+		virtual bool isWalkable() const { return true; };
 	};
 
 }

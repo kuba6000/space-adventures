@@ -12,6 +12,7 @@ namespace GigaGra {
 		~AluminiumWall();
 
 		void draw(int x, int y, float frame_delta) override;
+		bool isWalkable() const override { return false; };
 		AluminiumWall* clone() const override { return new AluminiumWall(*this); };
 	};
 

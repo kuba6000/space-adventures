@@ -81,7 +81,7 @@ namespace GigaGra {
 
 			}
 			if (buttonCentered({ "New game", font }, { x, y += h + 5 })) {
-
+				g.gameState = 1;
 			}
 			if (buttonCentered({ "Settings", font }, { x, y += h + 5 })) {
 				menuState = 1;

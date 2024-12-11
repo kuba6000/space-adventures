@@ -20,13 +20,13 @@
 namespace GigaGra {
 
 	Tile* tiles[1000][1000] = { {} };
-	Tile* availableTiles[] = { new Grass{}, new Stone{}, new AluminiumFloor{}, new AluminiumWall{} };
-	Tile* selectedTile = availableTiles[0];
+	Tile* selectedTile;
 
 	Editor::Editor()
 	{
 		editorView = g.window->getDefaultView();
 		editorView.setCenter(0, 0);
+		selectedTile = assets->availableTiles[0];
 	}
 	Editor::~Editor()
 	{
@@ -117,13 +117,13 @@ namespace GigaGra {
 		rect.setOutlineColor(sf::Color::White);
 		rect.setOutlineThickness(1);
 
-		int availableTilesCount = sizeof(availableTiles) / sizeof(Tile*);
+		int availableTilesCount = sizeof(assets->availableTiles) / sizeof(Tile*);
 
 		int rx = g.gameWidth / 2 - 32 * availableTilesCount;
 		int ry = g.gameHeight - 32;
 
 		for (int i = 0; i < availableTilesCount; i++) {
-			Tile* tile = availableTiles[i];
+			Tile* tile = assets->availableTiles[i];
 			rect.setPosition(rx + 32 * i, ry);
 			tile->draw(rx + 32 * i, ry, frame_delta);
 			if (tile == selectedTile)
@@ -154,7 +154,7 @@ namespace GigaGra {
 								tiles[x][y] = nullptr;
 							}
 							else {
-								tiles[x][y] = availableTiles[id - 1]->clone();
+								tiles[x][y] = assets->availableTiles[id - 1]->clone();
 							}
 						}
 					}
@@ -176,7 +176,7 @@ namespace GigaGra {
 					for (int y = 0; y < 1000; y++) {
 						if (tiles[x][y]) {
 							for (int i = 0; i < availableTilesCount; i++) {
-								if (typeid(*tiles[x][y]) == typeid(*availableTiles[i])) {
+								if (typeid(*tiles[x][y]) == typeid(*assets->availableTiles[i])) {
 									file << (unsigned char)(i+1);
 									break;
 								}
@@ -196,7 +196,7 @@ namespace GigaGra {
 			if (mousePos.y > ry && mousePos.y < ry + 32) {
 				int id = (mousePos.x - rx) / 32;
 				if (id >= 0 && id < availableTilesCount) {
-					selectedTile = availableTiles[id];
+					selectedTile = assets->availableTiles[id];
 				}
 			}
 			else {
