@@ -5,6 +5,8 @@
 #include "Stone.h"
 #include "AluminiumFloor.h"
 #include "AluminiumWall.h"
+#include "aluminiumdoor.h"
+#include "ControlPanel.h"
 
 namespace GigaGra {
 	class Assets
@@ -18,8 +20,13 @@ namespace GigaGra {
 		sf::Texture stoneTexture{};
 		sf::Texture aluminiumWallTexture{};
 		sf::Texture aluminiumFloorTexture{};
+		sf::Texture aluminiumDoorTexture{};
+		sf::Texture controlPanelTexture{};
+		sf::Texture hand{};
+		sf::Texture handPistol{};
+		sf::Texture crosshair{};
 
-		Tile* availableTiles[4];
+		Tile* availableTiles[6];
 	};
 
 

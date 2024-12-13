@@ -2,6 +2,8 @@
 #include <memory>
 namespace GigaGra{
 
+	class Map;
+
 	class Tile
 	{
 	public:
@@ -12,6 +14,7 @@ namespace GigaGra{
 		virtual Tile* clone() const = 0;
 
 		virtual bool isWalkable() const { return true; };
+		virtual bool onInteract(Map* map, int x, int y, void* passingData) { return false; };
 	};
 
 }

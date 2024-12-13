@@ -135,9 +135,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aluminiumdoor.cpp" />
     <ClCompile Include="AluminiumFloor.cpp" />
     <ClCompile Include="AluminiumWall.cpp" />
     <ClCompile Include="Assets.cpp" />
+    <ClCompile Include="ControlPanel.cpp" />
     <ClCompile Include="editor.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Grass.cpp" />
@@ -152,9 +154,11 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aluminiumdoor.h" />
     <ClInclude Include="AluminiumFloor.h" />
     <ClInclude Include="AluminiumWall.h" />
     <ClInclude Include="Assets.h" />
+    <ClInclude Include="ControlPanel.h" />
     <ClInclude Include="editor.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="globals.h" />

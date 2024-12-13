@@ -38,7 +38,17 @@ namespace GigaGra {
 			if (event.key.code == sf::Keyboard::Escape) {
 				g.gameState = 0;
 			}
-
+			else if (event.key.code == sf::Keyboard::X) {
+				for (int x = 0; x < 1000; x++)
+				{
+					for (int y = 0; y < 1000; y++)
+					{
+						if (tiles[x][y])
+							delete tiles[x][y];
+						tiles[x][y] = assets->availableTiles[0]->clone();
+					}
+				}
+			}
 		}
 	}
 	void Editor::render(float frame_delta)

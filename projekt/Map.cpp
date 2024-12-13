@@ -44,7 +44,9 @@ namespace GigaGra {
 	}
 	Tile* Map::getTile(int x, int y) {
 		int i = y * width + x;
-		return tiles[i];
+		if (i >= 0 && i < width * height)
+			return tiles[i];
+		return nullptr;
 	}
 	Tile* Map::getTileMap(float x, float y)
 	{
@@ -109,6 +111,32 @@ namespace GigaGra {
 				movementToLimit.y = std::fmaxf(movementToLimit.y, (((int)floor(cornerTRNew.y / TILE_SIZE)) * TILE_SIZE + TILE_SIZE - 1) - cornerTR.y + 1);
 			}
 		}
+	}
+	bool Map::isInBounds(float x, float y)
+	{
+		int tileX = floor(x / TILE_SIZE) + map0x;
+		int tileY = floor(y / TILE_SIZE) + map0y;
+		if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
+			return true;
+		}
+		return false;
+	}
+	bool Map::onAction(float x, float y)
+	{
+		int tileX = floor(x / TILE_SIZE) + map0x;
+		int tileY = floor(y / TILE_SIZE) + map0y;
+		outer: for (int x = -1; x <= 1; x++)
+		{
+			for (int y = -1; y <= 1; y++) {
+				Tile* tile = getTile(tileX + x, tileY + y);
+				if (tile) {
+					if (tile->onInteract(this, tileX + x, tileY + y, nullptr)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	void Map::draw(float x, float y, float frame_delta)
 	{
