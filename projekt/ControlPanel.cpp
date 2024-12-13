@@ -18,7 +18,7 @@ namespace GigaGra {
 	}
 	bool ControlPanel::onInteract(Map*, int, int, void*)
 	{
-		
+		game->openControlPanel();
 
 		return true;
 	}

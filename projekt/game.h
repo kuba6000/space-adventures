@@ -13,6 +13,7 @@ namespace GigaGra {
 		void update();
 		void render(float frame_delta);
 		bool isInSpace();
+		void openControlPanel();
 	private:
 		sf::View gameView;
 		sf::Sprite playerSprite{};

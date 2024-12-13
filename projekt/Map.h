@@ -17,7 +17,7 @@ namespace GigaGra {
 		Tile* getTile(int x, int y);
 		Tile* getTileMap(float x, float y);
 		Tile* getTileMap(sf::Vector2f pos);
-		void limitCollision(const sf::FloatRect &rectToCollide, sf::Vector2f &movementToLimit);
+		bool limitCollision(const sf::FloatRect &rectToCollide, sf::Vector2f &movementToLimit);
 		bool isInBounds(float x, float y);
 
 		bool onAction(float x, float y);

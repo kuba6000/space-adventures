@@ -61,8 +61,9 @@ namespace GigaGra {
 	{
 		return getTileMap(pos.x, pos.y);
 	}
-	void Map::limitCollision(const sf::FloatRect& rectToCollide, sf::Vector2f& movementToLimit)
+	bool Map::limitCollision(const sf::FloatRect& rectToCollide, sf::Vector2f& movementToLimit)
 	{
+		bool hit = false;
 		if (movementToLimit.x > 0) {
 			sf::Vector2f cornerTR = { rectToCollide.left + rectToCollide.width, rectToCollide.top };
 			sf::Vector2f cornerBR = { rectToCollide.left + rectToCollide.width, rectToCollide.top + rectToCollide.height };
@@ -70,9 +71,11 @@ namespace GigaGra {
 			sf::Vector2f cornerBRNew = { cornerBR.x + movementToLimit.x, cornerBR.y };
 			if (Tile* t = getTileMap(cornerTRNew); t && !t->isWalkable()) {
 				movementToLimit.x = std::fminf(movementToLimit.x, ((int)floor(cornerTRNew.x / TILE_SIZE)) * TILE_SIZE - cornerTR.x - 1);
+				hit = true;
 			}
 			if (Tile* t = getTileMap(cornerBRNew); t && !t->isWalkable()) {
 				movementToLimit.x = std::fminf(movementToLimit.x, ((int)floor(cornerTRNew.x / TILE_SIZE)) * TILE_SIZE - cornerTR.x - 1);
+				hit = true;
 			}
 		}
 		if (movementToLimit.x < 0) {
@@ -82,9 +85,11 @@ namespace GigaGra {
 			sf::Vector2f cornerBLNew = { cornerBL.x + movementToLimit.x, cornerBL.y };
 			if (Tile* t = getTileMap(cornerTLNew); t && !t->isWalkable()) {
 				movementToLimit.x = std::fmaxf(movementToLimit.x, (((int)floor(cornerTLNew.x / TILE_SIZE)) * TILE_SIZE + TILE_SIZE - 1) - cornerTL.x + 1);
+				hit = true;
 			}
 			if (Tile* t = getTileMap(cornerBLNew); t && !t->isWalkable()) {
 				movementToLimit.x = std::fmaxf(movementToLimit.x, (((int)floor(cornerBLNew.x / TILE_SIZE)) * TILE_SIZE + TILE_SIZE - 1) - cornerTL.x + 1);
+				hit = true;
 			}
 		}
 		if (movementToLimit.y > 0) {
@@ -94,9 +99,11 @@ namespace GigaGra {
 			sf::Vector2f cornerBRNew = { cornerBR.x, cornerBR.y + movementToLimit.y };
 			if (Tile* t = getTileMap(cornerBLNew); t && !t->isWalkable()) {
 				movementToLimit.y = std::fminf(movementToLimit.y, ((int)floor(cornerBLNew.y / TILE_SIZE)) * TILE_SIZE - cornerBL.y - 1);
+				hit = true;
 			}
 			if (Tile* t = getTileMap(cornerBRNew); t && !t->isWalkable()) {
 				movementToLimit.y = std::fminf(movementToLimit.y, ((int)floor(cornerBRNew.y / TILE_SIZE)) * TILE_SIZE - cornerBR.y - 1);
+				hit = true;
 			}
 		}
 		if (movementToLimit.y < 0) {
@@ -106,11 +113,14 @@ namespace GigaGra {
 			sf::Vector2f cornerTRNew = { cornerTR.x, cornerTR.y + movementToLimit.y };
 			if (Tile* t = getTileMap(cornerTLNew); t && !t->isWalkable()) {
 				movementToLimit.y = std::fmaxf(movementToLimit.y, (((int)floor(cornerTLNew.y / TILE_SIZE)) * TILE_SIZE + TILE_SIZE - 1) - cornerTL.y + 1);
+				hit = true;
 			}
 			if (Tile* t = getTileMap(cornerTRNew); t && !t->isWalkable()) {
 				movementToLimit.y = std::fmaxf(movementToLimit.y, (((int)floor(cornerTRNew.y / TILE_SIZE)) * TILE_SIZE + TILE_SIZE - 1) - cornerTR.y + 1);
+				hit = true;
 			}
 		}
+		return hit;
 	}
 	bool Map::isInBounds(float x, float y)
 	{
