@@ -43,6 +43,10 @@ namespace GigaGra {
 	}
 	void Editor::render(float frame_delta)
 	{
+		static unsigned int width = 20;
+		static unsigned int height = 20;
+		static int map0x = width / 2;
+		static int map0y = height / 2;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			editorView.move(0, -10 * frame_delta);
 		}
@@ -69,9 +73,9 @@ namespace GigaGra {
 
 		for (int x = startX; x < endX; x++) {
 			for (int y = startY; y < endY; y++) {
-				if (x < -500 || y < -500 || x >= 500 || y >= 500) continue;
-				if (tiles[x + 500][y + 500])
-					tiles[x + 500][y + 500]->draw(x * 32, y * 32, frame_delta);
+				if (x < -map0x || y < -map0y || x >= map0x || y >= map0y) continue;
+				if (tiles[x + map0x][y + map0y])
+					tiles[x + map0x][y + map0y]->draw(x * 32, y * 32, frame_delta);
 			}
 		}
 
@@ -80,6 +84,13 @@ namespace GigaGra {
 
 		int x = floor(mousePos.x / 32) * 32;
 		int y = floor(mousePos.y / 32) * 32;
+
+		sf::RectangleShape fullMap(sf::Vector2f(width * 32, height * 32));
+		fullMap.setPosition(-map0x * 32, -map0y * 32);
+		fullMap.setFillColor(sf::Color::Transparent);
+		fullMap.setOutlineColor(sf::Color::White);
+		fullMap.setOutlineThickness(1);
+		g.window->draw(fullMap);
 
 		sf::RectangleShape rect(sf::Vector2f(31, 31));
 
@@ -132,7 +143,6 @@ namespace GigaGra {
 				rect.setOutlineColor(sf::Color::White);
 			g.window->draw(rect);
 		}
-
 		if (menu->button({ "Load", ui->Roboto }, { rx + 32.f * (availableTilesCount + 1), (float)ry })) {
 			OPENFILENAMEA ofn{};
 			ofn.lStructSize = sizeof(OPENFILENAMEA);
@@ -143,13 +153,17 @@ namespace GigaGra {
 			if (GetOpenFileNameA(&ofn)) {
 				std::cout << ofn.lpstrFile << std::endl;
 
-				std::ifstream file(ofn.lpstrFile);
+				std::ifstream file(ofn.lpstrFile, std::ios::binary);
+				file.read(reinterpret_cast<char*>(&width), sizeof(width));
+				file.read(reinterpret_cast<char*>(&height), sizeof(height));
+				map0x = width / 2;
+				map0y = height / 2;
 				if (file.is_open()) {
-					for (int x = 0; x < 1000; x++) {
-						for (int y = 0; y < 1000; y++) {
+					for (int y = 0; y < height; y++) {
+						for (int x = 0; x < width; x++) {
 							if (tiles[x][y]) delete tiles[x][y];
 							unsigned char id;
-							file >> id;
+							file.read(reinterpret_cast<char*>(&id), 1);
 							if (id == 0) {
 								tiles[x][y] = nullptr;
 							}
@@ -171,19 +185,22 @@ namespace GigaGra {
 
 			if (GetOpenFileNameA(&ofn)) {
 				std::cout << ofn.lpstrFile << std::endl;
-				std::ofstream file(ofn.lpstrFile);
-				for (int x = 0; x < 1000; x++) {
-					for (int y = 0; y < 1000; y++) {
+				std::ofstream file(ofn.lpstrFile, std::ios::binary);
+				file.write(reinterpret_cast<char*>(&width), sizeof(width));
+				file.write(reinterpret_cast<char*>(&height), sizeof(height));
+				for (int y = 0; y < height; y++) {
+					for (int x = 0; x < width; x++) {
 						if (tiles[x][y]) {
-							for (int i = 0; i < availableTilesCount; i++) {
-								if (typeid(*tiles[x][y]) == typeid(*assets->availableTiles[i])) {
-									file << (unsigned char)(i+1);
+							for (unsigned char i = 1; i < availableTilesCount+1; i++) {
+								if (typeid(*tiles[x][y]) == typeid(*assets->availableTiles[i-1])) {
+									file.write(reinterpret_cast<char*>(&i), 1);
 									break;
 								}
 							}
 						}
 						else {
-							file << (unsigned char)0;
+							static const char zero = 0;
+							file.write(&zero, 1);
 						}
 					}
 				}
@@ -200,19 +217,23 @@ namespace GigaGra {
 				}
 			}
 			else {
-				if (mousebutton == 0) {
-					if (!tiles[x / 32 + 500][y / 32 + 500] || typeid(*tiles[x / 32 + 500][y / 32 + 500]) != typeid(*selectedTile))
-					{
-						if (tiles[x / 32 + 500][y / 32 + 500])
-							delete tiles[x / 32 + 500][y / 32 + 500];
-						tiles[x / 32 + 500][y / 32 + 500] = selectedTile->clone();
+				int tileX = x / 32 + map0x;
+				int tileY = y / 32 + map0y;
+				if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
+					if (mousebutton == 0) {
+						if (!tiles[tileX][tileY] || typeid(*tiles[tileX][tileY]) != typeid(*selectedTile))
+						{
+							if (tiles[tileX][tileY])
+								delete tiles[tileX][tileY];
+							tiles[tileX][tileY] = selectedTile->clone();
+						}
 					}
-				}
-				else {
-					if (tiles[x / 32 + 500][y / 32 + 500])
-					{
-						delete tiles[x / 32 + 500][y / 32 + 500];
-						tiles[x / 32 + 500][y / 32 + 500] = nullptr;
+					else {
+						if (tiles[tileX][tileY])
+						{
+							delete tiles[tileX][tileY];
+							tiles[tileX][tileY] = nullptr;
+						}
 					}
 				}
 			}

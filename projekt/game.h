@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Tile.h"
+#include "Map.h"
 
 namespace GigaGra {
 	class Game
@@ -16,7 +17,7 @@ namespace GigaGra {
 		sf::Sprite playerSprite{};
 		sf::Vector2f playerPos{};
 
-		Tile* map[1000][1000]{};
+		Map map{};
 	};
 	extern Game *game;
 }

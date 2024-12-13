@@ -143,6 +143,7 @@
     <ClCompile Include="Grass.cpp" />
     <ClCompile Include="InputHelper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Stone.cpp" />
@@ -159,12 +160,17 @@
     <ClInclude Include="globals.h" />
     <ClInclude Include="Grass.h" />
     <ClInclude Include="InputHelper.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Stone.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="projekt.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,30 +13,11 @@ namespace GigaGra {
 		playerSprite.setTexture(assets->playerTexture);
 		//ziomalSprite.setScale(5.f, 5.f);
 
-		std::ifstream file("assets\\map1.map");
-		if (file.is_open()) {
-			for (int x = 0; x < 1000; x++) {
-				for (int y = 0; y < 1000; y++) {
-					if (map[x][y]) delete map[x][y];
-					unsigned char id;
-					file >> id;
-					if (id == 0) {
-						map[x][y] = nullptr;
-					}
-					else {
-						map[x][y] = assets->availableTiles[id - 1]->clone();
-					}
-				}
-			}
-		}
-		else
-		{
-			MessageBox(NULL, L"Failed to load map1.map", L"Error", MB_ICONERROR || MB_OK);
-			exit(1);
-		}
+		map.load("assets\\map1.map");
 	}
 	Game::~Game()
 	{
+		
 	}
 	void Game::processEvents(sf::Event event)
 	{
@@ -83,72 +64,12 @@ namespace GigaGra {
 
 		if (moveBy.x != 0.f || moveBy.y != 0.f) {
 			
+			// check collision
+			
 			sf::FloatRect pBounds = playerSprite.getGlobalBounds();
+			sf::FloatRect pRect{ playerPos.x, playerPos.y, pBounds.width, pBounds.height };
+			map.limitCollision(pRect, moveBy);
 
-			if (moveBy.x > 0) {
-				sf::Vector2f cornerTR = { playerPos.x + pBounds.width, playerPos.y };
-				sf::Vector2f cornerBR = { playerPos.x + pBounds.width, playerPos.y + pBounds.height };
-				sf::Vector2f cornerTRNew = { cornerTR.x + moveBy.x, cornerTR.y };
-				sf::Vector2f cornerBRNew = { cornerBR.x + moveBy.x, cornerBR.y };
-				int tileX = floor(cornerTRNew.x / 32) + 500;
-				int tileY = floor(cornerTRNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.x = std::fminf(moveBy.x, (tileX - 500) * 32.f - cornerTR.x - 1);
-				}
-				tileX = floor(cornerBRNew.x / 32) + 500;
-				tileY = floor(cornerBRNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.x = std::fminf(moveBy.x, (tileX - 500) * 32.f - cornerTR.x - 1);
-				}
-			}
-			if (moveBy.x < 0) {
-				sf::Vector2f cornerTL = { playerPos.x, playerPos.y };
-				sf::Vector2f cornerBL = { playerPos.x, playerPos.y + pBounds.height };
-				sf::Vector2f cornerTLNew = { cornerTL.x + moveBy.x, cornerTL.y };
-				sf::Vector2f cornerBLNew = { cornerBL.x + moveBy.x, cornerBL.y };
-				int tileX = floor(cornerTLNew.x / 32) + 500;
-				int tileY = floor(cornerTLNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.x = std::fmaxf(moveBy.x, ((tileX - 500) * 32.f + 31) - cornerTL.x + 1);
-				}
-				tileX = floor(cornerBLNew.x / 32) + 500;
-				tileY = floor(cornerBLNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.x = std::fmaxf(moveBy.x, ((tileX - 500) * 32.f + 31) - cornerTL.x + 1);
-				}
-			}
-			if (moveBy.y > 0) {
-				sf::Vector2f cornerBL = { playerPos.x, playerPos.y + pBounds.height };
-				sf::Vector2f cornerBR = { playerPos.x + pBounds.width, playerPos.y + pBounds.height };
-				sf::Vector2f cornerBLNew = { cornerBL.x, cornerBL.y + moveBy.y };
-				sf::Vector2f cornerBRNew = { cornerBR.x, cornerBR.y + moveBy.y };
-				int tileX = floor(cornerBLNew.x / 32) + 500;
-				int tileY = floor(cornerBLNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.y = std::fminf(moveBy.y, (tileY - 500) * 32.f - cornerBL.y - 1);
-				}
-				tileX = floor(cornerBRNew.x / 32) + 500;
-				tileY = floor(cornerBRNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.y = std::fminf(moveBy.y, (tileY - 500) * 32.f - cornerBR.y - 1);
-				}
-			}
-			if (moveBy.y < 0) {
-				sf::Vector2f cornerTL = { playerPos.x, playerPos.y };
-				sf::Vector2f cornerTR = { playerPos.x + pBounds.width, playerPos.y };
-				sf::Vector2f cornerTLNew = { cornerTL.x, cornerTL.y + moveBy.y };
-				sf::Vector2f cornerTRNew = { cornerTR.x, cornerTR.y + moveBy.y };
-				int tileX = floor(cornerTLNew.x / 32) + 500;
-				int tileY = floor(cornerTLNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.y = std::fmaxf(moveBy.y, ((tileY - 500) * 32.f + 31) - cornerTL.y + 1);
-				}
-				tileX = floor(cornerTRNew.x / 32) + 500;
-				tileY = floor(cornerTRNew.y / 32) + 500;
-				if (map[tileX][tileY] && !map[tileX][tileY]->isWalkable()) {
-					moveBy.y = std::fmaxf(moveBy.y, ((tileY - 500) * 32.f + 31) - cornerTR.y + 1);
-				}
-			}
 			playerPos += moveBy;
 		}
 
@@ -157,24 +78,17 @@ namespace GigaGra {
 		sf::FloatRect fr = playerSprite.getGlobalBounds();
 		gameView.setCenter(fr.getPosition() + (fr.getSize() / 2.f));
 
+		gameView.setViewport({ 0.75f, 0.f, 0.25f, 0.25f });
+		//gameView.setSize(g.gameWidth / 4, g.gameHeight / 4);
+
 		g.window->setView(gameView);
 		sf::Vector2f gameViewSize = gameView.getSize();
 		sf::Vector2f gameViewCenter = gameView.getCenter();
 		sf::FloatRect gameViewPort = sf::FloatRect(gameViewCenter.x - gameViewSize.x / 2.f, gameViewCenter.y - gameViewSize.y / 2.f, gameViewSize.x, gameViewSize.y);
 
 		//std::cout << gameViewSize.x << " " << gameViewSize.y << std::endl;
-		int startX = floor((gameViewCenter.x - gameViewSize.x / 2) / 32);
-		int startY = floor((gameViewCenter.y - gameViewSize.y / 2) / 32);
-		int endX = floor((gameViewCenter.x + gameViewSize.x / 2) / 32) + 1;
-		int endY = floor((gameViewCenter.y + gameViewSize.y / 2) / 32) + 1;
-
-		for (int x = startX; x < endX; x++) {
-			for (int y = startY; y < endY; y++) {
-				if (x < -500 || y < -500 || x >= 500 || y >= 500) continue;
-				if (map[x + 500][y + 500])
-					map[x + 500][y + 500]->draw(x * 32, y * 32, frame_delta);
-			}
-		}
+		
+		map.draw(0,0, frame_delta);
 
 		g.window->draw(playerSprite);
 	}
