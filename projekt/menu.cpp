@@ -5,6 +5,8 @@
 #include "Settings.h"
 #include "InputHelper.h"
 #include <iostream>
+#include "game.h"
+#include <Windows.h>
 
 namespace GigaGra {
 	Menu::Menu()
@@ -78,7 +80,12 @@ namespace GigaGra {
 		if (menuState == 0) {
 
 			if (buttonCentered({ "Continue", font }, { x, y += h + 5 })) {
-
+				if (!game->load()) {
+					MessageBox(nullptr, L"No savefile", L"Error", MB_OK);
+				}
+				else {
+					g.gameState = 1;
+				}
 			}
 			if (buttonCentered({ "New game", font }, { x, y += h + 5 })) {
 				g.gameState = 1;

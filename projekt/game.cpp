@@ -13,9 +13,12 @@ namespace GigaGra {
 
     Map* activeMap = nullptr;
 	int activeMapIndex = -1;
+    int nextMapIndex = -1;
     int isLeavingEntering = 0;
     bool isMirrored = false;
     bool isInControlPanel = false;
+    int isInMerchant = 0;
+    int travelTime = 0;
     struct Bullet {
         sf::RectangleShape shape;
         sf::Vector2f vel;
@@ -37,27 +40,89 @@ namespace GigaGra {
         "Genope",
         "Struxuzuno"
 	};
-	int shipUpgradeLevel = 0;
+
+
+	char shipUpgradeLevel = 0;
+    int playerUpgrades = 0;
     std::string shipUpgradeName[] = {
         "Laser cannon",
-        "Fuel factorer",
+        "Fuel factory",
 		"Shield generator",
 		"Hyperdrive",
     };
+
+    void setupLeavingDataForEntering() {
+        isLeavingEntering = 1;
+        leavingEnteringData.acc = 0.06f;
+        leavingEnteringData.vel = 1.f;
+        leavingEnteringData.backView = g.window->getDefaultView();
+        leavingEnteringData.viewCenter = { 0, 0 };
+        leavingEnteringData.viewSize = leavingEnteringData.backView.getSize();
+
+        float s = g.gameWidth * 1.8f;
+        float s0 = g.gameWidth;
+        float v0 = 1.f;
+        float a = 0.06f;
+        float t = (-2 * v0 + sqrtf(4 * (v0 * v0) - 4 * a * (2 * s0 - 2 * s))) / (2 * a);
+
+        leavingEnteringData.viewCenter.y -= v0 * t + 0.5f * a * t * t;
+        leavingEnteringData.viewSize += sf::Vector2f{ v0 * t + 0.5f * a * t * t, v0 * t + 0.5f * a * t * t };
+
+        leavingEnteringData.vel = v0 + a * t;
+    }
+
+    void setupLeavingDataForLeaving() {
+        isLeavingEntering = 2;
+        leavingEnteringData.acc = 0.06f;
+        leavingEnteringData.vel = 1.f;
+        leavingEnteringData.backView = g.window->getDefaultView();
+        leavingEnteringData.viewCenter = { 0, 0 };
+        leavingEnteringData.viewSize = leavingEnteringData.backView.getSize();
+    }
+
+    void Game::travelTo(int i) {
+        if (shipUpgradeLevel < i - 1)
+            return;
+        if (activeMapIndex == i) return;
+        if (activeMapIndex != -1) {
+            setupLeavingDataForLeaving();
+			travelTime = fabsf(activeMapIndex - i) * 2000;
+            nextMapIndex = i;
+            return;
+        }
+		static Map* planetMaps[] = {
+			&map2,
+			&map3,
+			&map3,
+            &map3,
+            &map3,
+            &map3
+		};
+		activeMap = planetMaps[i];
+		activeMapIndex = i;
+        setupLeavingDataForEntering();
+    }
 
     Game::Game()
     {
         gameView = g.window->getDefaultView();
 
-        playerPos = { 0.f, 0.f };
+        playerPos = { -200.f, 0.f };
         playerSprite.setTexture(assets->playerTexture);
         handSprite.setTexture(assets->handPistol);
         handPistolSprite.setTexture(assets->handPistol);
         handSprite.setOrigin({2, 2});
+		npcSprite.setTexture(assets->jackTexture);
+		npcSprite.setPosition(-256, -160);
 
         map.load("assets\\map1.map");
         map2.load("assets\\map2.map");
-        //activeMap = &map2;
+        map3.load("assets\\map3.map");
+
+        activeMap = &map2;
+        activeMapIndex = 0;
+
+
     }
     Game::~Game()
     {
@@ -90,36 +155,19 @@ namespace GigaGra {
                 g.gameState = 0;
             }
             else if (event.key.code == sf::Keyboard::E) {
-                map.onAction(playerPos.x, playerPos.y);
-                /*isLeavingEntering = 2;
-                activeMap = &map2;
-                leavingEnteringData.backView = g.window->getDefaultView();
-                leavingEnteringData.viewCenter = {0, 0};
-                leavingEnteringData.viewSize = leavingEnteringData.backView.getSize();
-                leavingEnteringData.acc = 0.06f;
-                leavingEnteringData.vel = 1.f;*/
+                bool handled = false;
+                handled = map.onAction(playerPos.x, playerPos.y);
+                if (!handled && activeMap)
+                    handled = activeMap->onAction(playerPos.x, playerPos.y);
+                if (!handled && activeMapIndex == 0) {
+                    // npc interaction
+                    sf::FloatRect npcBounds = npcSprite.getGlobalBounds();
+                    if (npcBounds.contains(playerPos)) {
+                        isInMerchant = 1;
+                    }
+                }
             }
             else if (event.key.code == sf::Keyboard::Q) {
-                isLeavingEntering = 1;
-                activeMap = &map2;
-                activeMapIndex = 0;
-                leavingEnteringData.acc = 0.06f;
-                leavingEnteringData.vel = 1.f;
-                leavingEnteringData.backView = g.window->getDefaultView();
-                leavingEnteringData.viewCenter = { 0, 0 };
-                leavingEnteringData.viewSize = leavingEnteringData.backView.getSize();
-
-                float s = g.gameWidth * 1.8f;
-                float s0 = g.gameWidth;
-                float v0 = 1.f;
-                float a = 0.06f;
-                float t = (-2 * v0 + sqrtf(4 * (v0 * v0) - 4 * a * (2 * s0 - 2 * s))) / (2 * a);
-
-                leavingEnteringData.viewCenter.y -= v0 * t + 0.5f * a * t * t;
-                leavingEnteringData.viewSize += sf::Vector2f{ v0 * t + 0.5f * a * t * t, v0 * t + 0.5f * a * t * t };
-
-                leavingEnteringData.vel = v0 + a * t;
-
             }
             break;
         }
@@ -226,7 +274,7 @@ namespace GigaGra {
 
                 sf::CircleShape planet{};
 				planet.setFillColor(sf::Color::White);
-				planet.setTexture(&assets->grassTexture);
+				planet.setTexture(&assets->planet1Texture);
 				planet.setOutlineColor(sf::Color::Red);
 				int hoveredPlanet = -1;
 				for (int i = 0; i < 6; i++) {
@@ -244,6 +292,13 @@ namespace GigaGra {
                     }
 				}
                 if (hoveredPlanet != -1) {
+
+                    if (InputHelper::wasMousePressed(sf::Mouse::Left) && hoveredPlanet != activeMapIndex && activeMapIndex != -1 && isLeavingEntering == 0) {
+                        travelTo(hoveredPlanet);
+                        isInControlPanel = false;
+                    }
+
+
                     t.setString(std::string(planetNames[hoveredPlanet])); 
                     t.setLetterSpacing(2);
 					t.setStyle(sf::Text::Bold);
@@ -278,6 +333,80 @@ namespace GigaGra {
                 }
 				
 
+            }
+            return;
+        }
+        else if (isInMerchant >= 1) {
+
+			static const sf::Color bgColor = { 19, 25, 36 };
+			static const sf::Color fgColor = { 31, 42, 59 };
+			g.window->setView(g.window->getDefaultView());
+			sf::Vector2f mousePos = Utils::mousePos();
+			sf::RectangleShape s = sf::RectangleShape(sf::Vector2f(g.gameWidth, g.gameHeight));
+			s.setFillColor(bgColor);
+			g.window->draw(s);
+			s.setPosition(20, 20);
+			s.setSize({ g.gameWidth - 40, g.gameHeight - 40 });
+			s.setFillColor(fgColor);
+			g.window->draw(s);
+			s.setFillColor(bgColor);
+			s.setPosition(200, 20);
+			s.setSize({ 20, g.gameHeight - 40 });
+			g.window->draw(s);
+			float y = 0;
+			if (menu->button({ isInMerchant == 1 ? "Jack" : "L", ui->Roboto}, {25, y += 25})) {
+			}
+			if (menu->button({ "Exit", ui->Roboto }, { 25, y += 35 })) {
+                    
+				isInMerchant = 0;
+			}
+			y = 0;
+			sf::Text t{ isInMerchant == 1 ? "Jack" : "L", ui->Roboto };
+			t.setLetterSpacing(2);
+			t.setStyle(sf::Text::Bold);
+			t.setPosition(225, y += 25);
+			g.window->draw(t);
+			t.setLetterSpacing(1);
+			t.setStyle(sf::Text::Regular);
+            if (isInMerchant == 1)
+			    t.setString("Hello! I am Jack The Weaponary Trader,\n How can I help you today?");
+            else if(isInMerchant == 2)
+                t.setString("Hello! I am L The Engineer,\n How can I help you today?");
+			t.setPosition(225, y += 35);
+			g.window->draw(t);
+            if (isInMerchant == 1) {
+                if (menu->button({ "Bullet damage [0/5]: 100 coins", ui->Roboto }, { 225, y += 35 + 35 })) {
+
+                }
+                if (menu->button({ "Armor damage [0/5]: 100 coins", ui->Roboto }, { 225, y += 35 })) {
+
+                }
+                if (menu->button({ "Your armor [0/5]: 200 coins", ui->Roboto }, { 225, y += 35 })) {
+
+                }
+                if (menu->button({ "Critical chance [0/5]: 300 coins", ui->Roboto }, { 225, y += 35 })) {
+
+                }
+                if (menu->button({ "Shield piercing [0/5]: 10000 coins", ui->Roboto }, { 225, y += 35 })) {
+
+                }
+                if (menu->button({ "Shield protection [0/5]: 10000 coins", ui->Roboto }, { 225, y += 35 })) {
+
+                }
+			}
+            else if (isInMerchant == 2) {
+                if (menu->button({ "Laser cannon: 100 coins + 5 laser parts", ui->Roboto }, { 225, y += 35 + 35 })) {
+
+                }
+                if (menu->button({ "Fuel factory: 500 coins + 5 fuel factory parts", ui->Roboto }, { 225, y += 35 + 35 })) {
+
+                }
+                if (menu->button({ "Shield generator: 800 coins + 5 shield parts", ui->Roboto }, { 225, y += 35 + 35 })) {
+
+                }
+                if (menu->button({ "Hyperdrive: 20000 coins + 5 hyperdrive parts", ui->Roboto }, { 225, y += 35 + 35 })) {
+
+                }
             }
             return;
         }
@@ -323,6 +452,8 @@ namespace GigaGra {
             sf::FloatRect pBounds = playerSprite.getGlobalBounds();
             //sf::FloatRect pRect{ playerPos.x, playerPos.y, pBounds.width, pBounds.height };
             map.limitCollision(pBounds, moveBy);
+            if(activeMap)
+				activeMap->limitCollision(pBounds, moveBy);
 
             playerPos += moveBy;
         }
@@ -373,6 +504,8 @@ namespace GigaGra {
                 if (isLeavingEntering == 2) {
                     isLeavingEntering = 0;
                     activeMap = nullptr;
+                    activeMapIndex = -1;
+                    //travelTo(nextMapIndex);
                 }
             }
             if (p < 0.f) {
@@ -388,12 +521,56 @@ namespace GigaGra {
         }
         
             
+        if (!activeMap) {
+			static sf::View starsView = g.window->getDefaultView();
+            starsView.setSize(sf::Vector2f{g.gameWidth, g.gameHeight} * (gameView.getSize().x / g.gameWidth));
+            static float yoffset = 0;
+            yoffset -= 3.f + moveBy.y;
+            starsView.setCenter(g.gameWidth, yoffset + fr.getPosition().y + (fr.getSize().y / 2.f));
+
+			g.window->setView(starsView);
+
+            travelTime -= 1.f * frame_delta;
+
+            if (travelTime <= 0 && nextMapIndex != -1) {
+                travelTo(nextMapIndex);
+            }
+            else {
+                static std::vector<std::pair<sf::Vector2f, float>> stars{};
+
+                if (stars.size() == 0) {
+                    for (int i = 0; i < 1000; i++) {
+                        stars.push_back({ {Utils::randomFloat(0, g.gameWidth * 2.f), Utils::randomFloat(0, g.gameHeight * 2.f)}, Utils::randomFloat(1, 3) });
+                    }
+                }
+
+                sf::Vector2f cent = starsView.getCenter();
+                float bott = cent.y + g.gameHeight;
+
+                for (int i = 0; i < stars.size(); i++) {
+					std::pair<sf::Vector2f, float>& s = stars[i];
+                    sf::CircleShape star{ s.second };
+                    star.setFillColor(sf::Color::White);
+                    star.setPosition(s.first);
+                    g.window->draw(star);
+
+                    if (s.first.y > bott)
+						s.first.y -= g.gameHeight * 2.f;
+                }
+            }
+        }
+
         g.window->setView(gameView);
         //gameView.setViewport({ 0.75f, 0.f, 0.25f, 0.25f });
         //gameView.setSize(g.gameWidth / 4, g.gameHeight / 4);
 
-        if (activeMap && !isLeavingEntering)
+        if (activeMap && !isLeavingEntering) {
             activeMap->draw(0, 0, frame_delta);
+            if (activeMapIndex == 0) {
+                g.window->draw(npcSprite);
+            }
+        }
+        
 
         sf::Vector2f gameViewSize = gameView.getSize();
         sf::Vector2f gameViewCenter = gameView.getCenter();
@@ -411,7 +588,7 @@ namespace GigaGra {
         float rot = RAD_TO_DEG(atan2f(mousePos.y, mousePos.x));
         
 
-        if (InputHelper::wasMousePressed(sf::Mouse::Left)) {
+        if (InputHelper::wasMousePressed(sf::Mouse::Left) && activeMap && !isLeavingEntering) {
 
             sf::Vector2f bulletPos = handSprite.getPosition();
             sf::Vector2f bulletDir = { cosf(DEG_TO_RAD(rot)), sinf(DEG_TO_RAD(rot)) };
@@ -443,6 +620,82 @@ namespace GigaGra {
         for (Bullet& b : bullets) {
             g.window->draw(b.shape);
         }
+
+		// floating texts
+		for (int i = 0; i < floatingTexts.size(); i++) {
+			auto& ft = floatingTexts[i];
+			ft.second -= frame_delta;
+            ft.first.move(0.f, -1.f * frame_delta);
+			if (ft.second <= 0) {
+				floatingTexts.erase(floatingTexts.begin() + i);
+				i--;
+				continue;
+			}
+			g.window->draw(ft.first);
+		}
+
+        if (activeMap)
+        {
+            std::string hint = activeMap->findInteractionHint(playerPos.x, playerPos.y);
+            if (hint == "")
+				hint = map.findInteractionHint(playerPos.x, playerPos.y);
+            if (hint != "") {
+                sf::Text t{ hint, ui->Roboto };
+                t.setCharacterSize(18);
+                t.setStyle(sf::Text::Bold);
+                t.setFillColor(sf::Color::White);
+                t.setPosition(playerPos.x - 50, playerPos.y - 50);
+                g.window->draw(t);
+            }
+        }
+
+        // player ui
+
+		g.window->setView(g.window->getDefaultView());
+
+        sf::RectangleShape s{ {g.gameWidth, 50} };
+        static const sf::Color bgColor = { 19, 25, 36 };
+        static const sf::Color fgColor = { 31, 42, 59 };
+		s.setFillColor(bgColor);
+        s.setPosition(0, g.gameHeight - 50);
+		g.window->draw(s);
+
+		s.setFillColor(fgColor);
+		s.setPosition(0, g.gameHeight - 40);
+		s.setSize({ g.gameWidth, 40 });
+        g.window->draw(s);
+
+		sf::RectangleShape healthBar = sf::RectangleShape(sf::Vector2f(100, 10));
+		healthBar.setFillColor(sf::Color::Red);
+		healthBar.setPosition(10, g.gameHeight - 15);
+		g.window->draw(healthBar);
+
+		healthBar.setSize(sf::Vector2f(playerData.hp, 10));
+		healthBar.setFillColor(sf::Color::Green);
+		g.window->draw(healthBar);
+
+		sf::Text t{ "HP", ui->Roboto };
+		t.setCharacterSize(18);
+		t.setStyle(sf::Text::Bold);
+
+		t.setPosition(10, g.gameHeight - 35);
+		t.setFillColor(sf::Color::White);
+        g.window->draw(t);
+
+		t.setString("Coins");
+        t.setPosition(130, g.gameHeight - 35);
+        g.window->draw(t);
+        sf::Text d {std::to_string(playerData.coins),  ui->Roboto };
+		d.setCharacterSize(18);
+        d.setPosition(130, g.gameHeight - 20);
+        d.setFillColor({ 255, 181, 43 });
+        g.window->draw(d);
+
+
+
+
+
+
     }
 
     bool Game::isInSpace()
@@ -453,6 +706,34 @@ namespace GigaGra {
     void Game::openControlPanel()
     {
         isInControlPanel = true;
+    }
+
+    void Game::save()
+    {
+		std::ofstream file("savegame.sav", std::ios::binary);
+
+        file.write(&shipUpgradeLevel, 1);
+        file.write(reinterpret_cast<char*>(&playerPos), sizeof(sf::Vector2f));
+        file.write(reinterpret_cast<char*>(&playerData), sizeof(PlayerData));
+
+        pushFloatingText({ "Saved!", ui->Roboto }, playerPos, 100);
+    }
+
+    bool Game::load()
+    {
+		std::ifstream file("savegame.sav", std::ios::binary);
+        if (!file.is_open()) return false;
+		file.read(&shipUpgradeLevel, 1);
+		file.read(reinterpret_cast<char*>(&playerPos), sizeof(sf::Vector2f));
+		file.read(reinterpret_cast<char*>(&playerData), sizeof(PlayerData));
+        return true;
+    }
+
+    void Game::pushFloatingText(sf::Text text, sf::Vector2f pos, float time)
+    {
+        text.setCharacterSize(18);
+        text.setPosition(pos);
+		floatingTexts.push_back({ text, time });
     }
 
     Game *game;

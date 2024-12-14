@@ -18,6 +18,10 @@ namespace GigaGra {
 		availableTiles[3] = new AluminiumWall{};
 		availableTiles[4] = new AluminiumDoor{};
 		availableTiles[5] = new ControlPanel{};
+		availableTiles[6] = new Tree{};
+		availableTiles[7] = new Wood{};
+		availableTiles[8] = new Water{};
+		availableTiles[9] = new Bed{};
 
 		tryLoad(&grassTexture, "assets\\grass.png");
 		tryLoad(&stoneTexture, "assets\\stone.png");
@@ -28,6 +32,12 @@ namespace GigaGra {
 		tryLoad(&controlPanelTexture, "assets\\controlpanel.png");
 		tryLoad(&hand, "assets\\hand.png");
 		tryLoad(&handPistol, "assets\\handpistol.png");
+		tryLoad(&planet1Texture, "assets\\test.png");
+		tryLoad(&jackTexture, "assets\\jack.png");
+		tryLoad(&treeTexture, "assets\\tree.png");
+		tryLoad(&woodTexture, "assets\\wood.png");
+		tryLoad(&waterTexture, "assets\\water.png");
+		tryLoad(&bedTexture, "assets\\bed.png");
 	}
 
 	Assets::~Assets()

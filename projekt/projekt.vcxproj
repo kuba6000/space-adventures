@@ -139,6 +139,7 @@
     <ClCompile Include="AluminiumFloor.cpp" />
     <ClCompile Include="AluminiumWall.cpp" />
     <ClCompile Include="Assets.cpp" />
+    <ClCompile Include="bed.cpp" />
     <ClCompile Include="ControlPanel.cpp" />
     <ClCompile Include="editor.cpp" />
     <ClCompile Include="game.cpp" />
@@ -150,14 +151,18 @@
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Tree.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Water.cpp" />
+    <ClCompile Include="Wood.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aluminiumdoor.h" />
     <ClInclude Include="AluminiumFloor.h" />
     <ClInclude Include="AluminiumWall.h" />
     <ClInclude Include="Assets.h" />
+    <ClInclude Include="bed.h" />
     <ClInclude Include="ControlPanel.h" />
     <ClInclude Include="editor.h" />
     <ClInclude Include="game.h" />
@@ -170,8 +175,11 @@
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Stone.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="Tree.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Water.h" />
+    <ClInclude Include="Wood.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="projekt.rc" />

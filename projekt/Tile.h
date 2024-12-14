@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+#include <SFML/Graphics.hpp>
 namespace GigaGra{
 
 	class Map;
@@ -15,6 +15,7 @@ namespace GigaGra{
 
 		virtual bool isWalkable() const { return true; };
 		virtual bool onInteract(Map* map, int x, int y, void* passingData) { return false; };
+		virtual std::string getInteractionHint() const { return ""; };
 	};
 
 }

@@ -21,6 +21,7 @@ namespace GigaGra {
 		bool isInBounds(float x, float y);
 
 		bool onAction(float x, float y);
+		std::string findInteractionHint(float x, float y);
 
 	private:
 		int width = 0;
