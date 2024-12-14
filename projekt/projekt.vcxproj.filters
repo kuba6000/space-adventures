@@ -87,6 +87,12 @@
     <ClCompile Include="bed.cpp">
       <Filter>Pliki źródłowe\GameElement\Tile</Filter>
     </ClCompile>
+    <ClCompile Include="IronOre.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Gravel.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="menu.h">
@@ -153,6 +159,12 @@
       <Filter>Pliki nagłówkowe\tile</Filter>
     </ClInclude>
     <ClInclude Include="bed.h">
+      <Filter>Pliki nagłówkowe\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="IronOre.h">
+      <Filter>Pliki nagłówkowe\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="Gravel.h">
       <Filter>Pliki nagłówkowe\tile</Filter>
     </ClInclude>
   </ItemGroup>

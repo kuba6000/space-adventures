@@ -8,6 +8,10 @@ namespace GigaGra {
 	struct PlayerData {
 		int hp = 100;
 		int coins = 0;
+		int parts1 = 0;
+		int parts2 = 0;
+		int parts3 = 0;
+		int parts4 = 0;
 	};
 
 	class Game
@@ -40,6 +44,7 @@ namespace GigaGra {
 		Map map{};
 		Map map2{};
 		Map map3{};
+		Map map4{};
 	};
 	extern Game *game;
 }

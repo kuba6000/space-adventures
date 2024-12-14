@@ -144,7 +144,9 @@
     <ClCompile Include="editor.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Grass.cpp" />
+    <ClCompile Include="Gravel.cpp" />
     <ClCompile Include="InputHelper.cpp" />
+    <ClCompile Include="IronOre.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="menu.cpp" />
@@ -168,7 +170,9 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="Grass.h" />
+    <ClInclude Include="Gravel.h" />
     <ClInclude Include="InputHelper.h" />
+    <ClInclude Include="IronOre.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="resource.h" />

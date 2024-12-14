@@ -22,6 +22,8 @@ namespace GigaGra {
     struct Bullet {
         sf::RectangleShape shape;
         sf::Vector2f vel;
+        bool isEnemyBullet = false;
+		int damage = 1;
     };
     std::vector<Bullet> bullets;
     struct LeavingEnteringSequence {
@@ -42,7 +44,7 @@ namespace GigaGra {
 	};
 
 
-	char shipUpgradeLevel = 0;
+	char shipUpgradeLevel = 1;
     int playerUpgrades = 0;
     std::string shipUpgradeName[] = {
         "Laser cannon",
@@ -80,20 +82,39 @@ namespace GigaGra {
         leavingEnteringData.viewSize = leavingEnteringData.backView.getSize();
     }
 
+    struct Enemy {
+        int type;
+        sf::Vector2f pos;
+		sf::Sprite sprite;
+        int hp = 1;
+    };
+
+    std::vector<Enemy> enemies{};
+
+    struct Pickup {
+        int type;
+        sf::Sprite sprite;
+    };
+
+    std::vector<Pickup> pickups{};
+
     void Game::travelTo(int i) {
         if (shipUpgradeLevel < i - 1)
             return;
         if (activeMapIndex == i) return;
         if (activeMapIndex != -1) {
+            enemies.clear();
+			bullets.clear();
+			pickups.clear();
             setupLeavingDataForLeaving();
-			travelTime = fabsf(activeMapIndex - i) * 2000;
+			travelTime = fabsf(activeMapIndex - i) * 200;
             nextMapIndex = i;
             return;
         }
 		static Map* planetMaps[] = {
 			&map2,
 			&map3,
-			&map3,
+			&map4,
             &map3,
             &map3,
             &map3
@@ -118,6 +139,7 @@ namespace GigaGra {
         map.load("assets\\map1.map");
         map2.load("assets\\map2.map");
         map3.load("assets\\map3.map");
+        map4.load("assets\\map4.map");
 
         activeMap = &map2;
         activeMapIndex = 0;
@@ -473,6 +495,107 @@ namespace GigaGra {
             if (activeMap && !activeMap->isInBounds(b.shape.getPosition().x, b.shape.getPosition().y)) {
                 bullets.erase(bullets.begin() + i);
                 i--;
+                continue;
+            }
+            if (b.isEnemyBullet) {
+                if (playerSprite.getGlobalBounds().contains(b.shape.getPosition())) {
+                    playerData.hp -= b.damage;
+                    bullets.erase(bullets.begin() + i);
+                    i--;
+                    continue;
+                }
+            }
+        }
+        {
+            static float t = 0.f;
+            t += frame_delta;
+            bool enemiesAttack = false;
+            if (t > 100.f) {
+                enemiesAttack = true;
+                t = 0.f;
+            }
+            for (int i = 0; i < enemies.size(); i++) {
+
+                Enemy& e = enemies[i];
+                sf::Vector2f moveBy = { 0.f, 0.f };
+
+                sf::Vector2f posDif = playerPos - e.pos;
+                float rotation = atan2f(posDif.y, posDif.x);
+                moveBy.x = cosf(rotation) * 1.f;
+                moveBy.y = sinf(rotation) * 1.f;
+                e.pos += moveBy * frame_delta;
+                e.sprite.setPosition(e.pos);
+                if (enemiesAttack) {
+                    if (e.type == 2) {
+                        // create bullet
+						sf::RectangleShape shape = sf::RectangleShape({ 5, 5 });
+						shape.setOrigin({ 2.5, 2.5 });
+						shape.setRotation(rotation * 180.f / 3.14159265f);
+						shape.setFillColor(sf::Color::Red);
+						shape.setPosition(e.pos);
+						sf::Vector2f vel = moveBy * 5.f;
+                        bullets.push_back({shape, vel, true, 5});
+					}
+				}
+
+                for (int j = 0; j < bullets.size(); j++) {
+                    Bullet& b = bullets[j];
+                    if (b.isEnemyBullet) continue;
+                    if (e.sprite.getGlobalBounds().contains(b.shape.getPosition())) {
+                        pushFloatingText({ "Hit!", ui->Roboto }, b.shape.getPosition(), 10);
+                        e.hp -= 1;
+                        bullets.erase(bullets.begin() + j);
+                        j--;
+                        if (e.hp <= 0) {
+                            if (rand() % 100 < 5) {
+                                Pickup p{ 1, {} };
+                                p.sprite.setTexture(assets->shipPart1Texture);
+                                p.sprite.setPosition(b.shape.getPosition());
+
+                                pickups.push_back(p);
+                            }
+                            else {
+                                Pickup p{ 0, {} };
+                                p.sprite.setTexture(assets->coinTexture);
+                                p.sprite.setPosition(b.shape.getPosition());
+
+                                pickups.push_back(p);
+                            }
+                            enemies.erase(enemies.begin() + i);
+                            i--;
+                            goto outer_continue;
+                        }
+                        else
+                            continue;
+                    }
+                }
+                if (e.sprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds())) {
+                    enemies.erase(enemies.begin() + i);
+                    i--;
+                    playerData.hp -= e.hp * 5;
+                }
+
+            outer_continue:;
+            }
+        }
+
+        for (int i = 0; i < pickups.size(); i++) {
+            Pickup& p = pickups[i];
+            if (p.sprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds())) {
+				sf::Text t = sf::Text("", ui->Roboto);
+                if (p.type == 0) {
+					t.setString("+1 coin");
+                    t.setFillColor(sf::Color::Yellow);
+                    playerData.coins += 1;
+                }
+                else if (p.type == 1) {
+					t.setString("+1 Laser cannon part");
+                    t.setFillColor(sf::Color::Red);
+                    playerData.parts1 += 1;
+                }
+                pushFloatingText(t, p.sprite.getPosition(), 30);
+                pickups.erase(pickups.begin() + i);
+                i--;
             }
         }
 
@@ -569,6 +692,55 @@ namespace GigaGra {
             if (activeMapIndex == 0) {
                 g.window->draw(npcSprite);
             }
+            else if (activeMapIndex > 0) {
+                static float t = 0;
+                t += frame_delta;
+                if (t > 100) {
+                    t = 0;
+                    // spawn enemies outside visible area
+
+					float leftX = gameView.getCenter().x - gameView.getSize().x / 2.f;
+					float rightX = gameView.getCenter().x + gameView.getSize().x / 2.f;
+					float topY = gameView.getCenter().y - gameView.getSize().y / 2.f;
+					float bottomY = gameView.getCenter().y + gameView.getSize().y / 2.f;
+
+                    int side = rand() % 4;
+                    Enemy e;
+					if (side == 0) {
+						// top
+						e = { 0, { Utils::randomFloat(leftX, rightX), topY - 100 }, {} };
+					}
+					else if (side == 1) {
+						// right
+						e = { 0, { rightX + 100, Utils::randomFloat(topY, bottomY) }, {} };
+					}
+					else if (side == 2) {
+						// bottom
+						e = { 0, { Utils::randomFloat(leftX, rightX), bottomY + 100 }, {} };
+						
+					}
+					else if (side == 3) {
+						// left
+						e = { 0, { leftX - 100, Utils::randomFloat(topY, bottomY) }, {} };
+					}
+                    e.sprite.setPosition(e.pos);
+                    if (activeMapIndex == 1) {
+                        e.sprite.setTexture(assets->gragTexture);
+                        
+                    }
+                    else if (activeMapIndex == 2) {
+                        e.sprite.setTexture(assets->stoneBlobTexture);
+                        e.type = 1;
+                        if (rand() % 100 < 30)
+                        {
+                            e.sprite.setTexture(assets->ironManTexture);
+                            e.type = 2;
+							e.hp = 3;
+                        }
+                    }
+                    enemies.push_back(e);
+                }
+            }
         }
         
 
@@ -595,7 +767,7 @@ namespace GigaGra {
             sf::Vector2f bulletVel = bulletDir * 10.f;
             sf::Vector2f bulletSize = { 4.f, 4.f };
             sf::Vector2f bulletOrigin = { 2.f, 2.f };
-            sf::Color bulletColor = sf::Color::Red;
+            sf::Color bulletColor = { 201, 201, 201 };
             sf::RectangleShape bullet = sf::RectangleShape(bulletSize);
 
             bullet.setOrigin(bulletOrigin);
@@ -619,6 +791,31 @@ namespace GigaGra {
 
         for (Bullet& b : bullets) {
             g.window->draw(b.shape);
+        }
+
+        for (Enemy& e : enemies) {
+			g.window->draw(e.sprite);
+        }
+        {
+            static int t = 0;
+            for (Pickup& p : pickups) {
+
+                if (t < 10)
+                {
+                    p.sprite.move(0.f, 0.5f);
+                }
+                else if (t < 20)
+                {
+                    p.sprite.move(0.f, -0.5f);
+                }
+                else
+                {
+                    t = 0;
+                }
+
+                g.window->draw(p.sprite);
+            }
+            t++;
         }
 
 		// floating texts

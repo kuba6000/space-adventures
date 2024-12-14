@@ -45,7 +45,7 @@ namespace GigaGra {
 					{
 						if (tiles[x][y])
 							delete tiles[x][y];
-						tiles[x][y] = assets->availableTiles[0]->clone();
+						tiles[x][y] = new Stone{};
 					}
 				}
 			}

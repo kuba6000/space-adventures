@@ -22,6 +22,8 @@ namespace GigaGra {
 		availableTiles[7] = new Wood{};
 		availableTiles[8] = new Water{};
 		availableTiles[9] = new Bed{};
+		availableTiles[10] = new IronOre{};
+		availableTiles[11] = new Gravel{};
 
 		tryLoad(&grassTexture, "assets\\grass.png");
 		tryLoad(&stoneTexture, "assets\\stone.png");
@@ -34,10 +36,17 @@ namespace GigaGra {
 		tryLoad(&handPistol, "assets\\handpistol.png");
 		tryLoad(&planet1Texture, "assets\\test.png");
 		tryLoad(&jackTexture, "assets\\jack.png");
+		tryLoad(&coinTexture, "assets\\coin.png");
+		tryLoad(&shipPart1Texture, "assets\\shippart1.png");
+		tryLoad(&gragTexture, "assets\\grag.png");
+		tryLoad(&stoneBlobTexture, "assets\\stoneblob.png");
+		tryLoad(&ironManTexture, "assets\\ironman.png");
 		tryLoad(&treeTexture, "assets\\tree.png");
 		tryLoad(&woodTexture, "assets\\wood.png");
 		tryLoad(&waterTexture, "assets\\water.png");
 		tryLoad(&bedTexture, "assets\\bed.png");
+		tryLoad(&ironOreTexture, "assets\\ironore.png");
+		tryLoad(&gravelTexture, "assets\\gravel.png");
 	}
 
 	Assets::~Assets()
