@@ -88,6 +88,7 @@ namespace GigaGra {
 				}
 			}
 			if (buttonCentered({ "New game", font }, { x, y += h + 5 })) {
+				game->newGame();
 				g.gameState = 1;
 			}
 			if (buttonCentered({ "Settings", font }, { x, y += h + 5 })) {
@@ -137,7 +138,7 @@ namespace GigaGra {
 			}
 		}
 		else {
-			text.setFillColor(sf::Color::White);
+			//text.setFillColor(sf::Color::White);
 		}
 
 		g.window->draw(text);

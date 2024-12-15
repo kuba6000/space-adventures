@@ -13,6 +13,10 @@
 #include "Bed.h"
 #include "Gravel.h"
 #include "IronOre.h"
+#include "Sand.h"
+#include "Krzak.h"
+#include "Ice.h"
+#include "Snow.h"
 
 namespace GigaGra {
 	class Assets
@@ -33,13 +37,23 @@ namespace GigaGra {
 		sf::Texture waterTexture{};
 		sf::Texture ironOreTexture{};
 		sf::Texture gravelTexture{};
+		sf::Texture sandTexture{};
+		sf::Texture iceTexture{};
+		sf::Texture snowTexture{};
+		sf::Texture krzakTexture{};
 		sf::Texture bedTexture{};
 		sf::Texture jackTexture{};
+		sf::Texture lTexture{};
 		sf::Texture gragTexture{};
 		sf::Texture stoneBlobTexture{};
 		sf::Texture ironManTexture{};
+		sf::Texture krzakorTexture{};
+		sf::Texture patyczakTexture{};
 		sf::Texture coinTexture{};
 		sf::Texture shipPart1Texture{};
+		sf::Texture shipPart2Texture{};
+		sf::Texture shipPart3Texture{};
+		sf::Texture shipPart4Texture{};
 
 		sf::Texture planet1Texture{};
 
@@ -48,7 +62,7 @@ namespace GigaGra {
 		sf::Texture handPistol{};
 		sf::Texture crosshair{};
 
-		Tile* availableTiles[12];
+		Tile* availableTiles[16];
 	};
 
 

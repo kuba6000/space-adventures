@@ -33,9 +33,20 @@ int main() {
 
     g.window = &window;
 
+    window.clear();
+
+    ui = new UI{};
+
+    sf::Text t{ "Loading", ui->Roboto };
+	t.setCharacterSize(24);
+	t.setStyle(sf::Text::Bold);
+	t.setFillColor(sf::Color::White);
+	t.setPosition(g.gameWidth / 2 - t.getLocalBounds().width / 2, g.gameHeight / 2 - t.getLocalBounds().height / 2);
+	window.draw(t);
+    window.display();
+
     assets = new Assets{};
     settings = new Settings{};
-    ui = new UI{};
 	menu = new Menu{};
 	game = new Game{};
 	editor = new Editor{};

@@ -22,6 +22,12 @@
     <Filter Include="Pliki nagłówkowe\tile">
       <UniqueIdentifier>{4a57a429-fea1-4360-8b46-7898c49f323c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\enemy">
+      <UniqueIdentifier>{c1d843e0-a984-42e8-bca7-5465402904cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\GameElement\enemy">
+      <UniqueIdentifier>{ac183708-35f8-4b67-a24d-f03b7fcd22bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -91,6 +97,18 @@
       <Filter>Pliki źródłowe\GameElement\Tile</Filter>
     </ClCompile>
     <ClCompile Include="Gravel.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="sand.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="krzak.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Ice.cpp">
+      <Filter>Pliki źródłowe\GameElement\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Snow.cpp">
       <Filter>Pliki źródłowe\GameElement\Tile</Filter>
     </ClCompile>
   </ItemGroup>
@@ -165,6 +183,18 @@
       <Filter>Pliki nagłówkowe\tile</Filter>
     </ClInclude>
     <ClInclude Include="Gravel.h">
+      <Filter>Pliki nagłówkowe\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="sand.h">
+      <Filter>Pliki nagłówkowe\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="krzak.h">
+      <Filter>Pliki nagłówkowe\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="Ice.h">
+      <Filter>Pliki nagłówkowe\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="Snow.h">
       <Filter>Pliki nagłówkowe\tile</Filter>
     </ClInclude>
   </ItemGroup>

@@ -26,6 +26,7 @@ namespace GigaGra {
 		void openControlPanel();
 		void save();
 		bool load();
+		void newGame();
 		void pushFloatingText(sf::Text, sf::Vector2f, float);
 	private:
 		sf::View gameView;
@@ -38,6 +39,7 @@ namespace GigaGra {
 		std::vector<std::pair<sf::Text, float>> floatingTexts{};
 
 		sf::Sprite npcSprite{};
+		sf::Sprite npc2Sprite{};
 
 		void travelTo(int);
 
@@ -45,6 +47,8 @@ namespace GigaGra {
 		Map map2{};
 		Map map3{};
 		Map map4{};
+		Map map5{};
+		Map map6{};
 	};
 	extern Game *game;
 }

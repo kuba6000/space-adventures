@@ -16,6 +16,8 @@
 #include "AluminiumWall.h"
 #include "AluminiumFloor.h"
 #include <Windows.h>
+#include "sand.h"
+#include "Ice.h"
 
 namespace GigaGra {
 
@@ -45,7 +47,7 @@ namespace GigaGra {
 					{
 						if (tiles[x][y])
 							delete tiles[x][y];
-						tiles[x][y] = new Stone{};
+						tiles[x][y] = new Ice{};
 					}
 				}
 			}
