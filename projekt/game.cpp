@@ -281,7 +281,7 @@ namespace GigaGra {
 
         if (ending >= 200.f) {
             ending += frame_delta;
-            if (ending < 1200.f) {
+            if (ending < 3000.f) {
                 sf::Text t{ T(L"ending1"), ui->Roboto };
                 t.setFillColor(sf::Color::White);
                 t.setPosition(g.gameWidth / 2 - t.getLocalBounds().width / 2, g.gameHeight / 2 - t.getLocalBounds().height / 2);
@@ -289,12 +289,12 @@ namespace GigaGra {
                 sf::RectangleShape blackBox = sf::RectangleShape(sf::Vector2f(g.gameWidth, g.gameHeight));
                 blackBox.setPosition(0, 0);
                 blackBox.setSize({ g.gameWidth, g.gameHeight });
-                if (ending < 1000.f) {
+                if (ending < 2800.f) {
                     blackBox.setFillColor(sf::Color(0, 0, 0, 255 - (int)(fminf(((ending - 200.f) / 200.f), 1.f) * 255.f)));
                 }
                 else
                 {
-                    blackBox.setFillColor(sf::Color(0, 0, 0, (int)(fminf(((ending - 1000.f) / 200.f), 1.f) * 255.f)));
+                    blackBox.setFillColor(sf::Color(0, 0, 0, (int)(fminf(((ending - 2800.f) / 200.f), 1.f) * 255.f)));
                 }
                 g.window->draw(blackBox);
             }
@@ -1019,7 +1019,9 @@ namespace GigaGra {
                 {
 					nextMapIndex = -1;
                     ending = 0.f;
-                }
+				}
+				else
+					travelTo(nextMapIndex);
             }
             else {
                 static std::vector<std::pair<sf::Vector2f, float>> stars{};

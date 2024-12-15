@@ -26,16 +26,18 @@ namespace GigaGra {
 					value.replace(pos, 2, L"\n");
 					pos = value.find(L"\\n");
 				}
+				//std::wcout << L"key: " << key << L" value: " << value << std::endl;
 				translations[key] = value;
 			}
 		}
 	}
 	const std::wstring& Translations::get(const std::wstring& key)
 	{
+		//std::wcout << L"key: " << key << L" value: " << translations[key] << std::endl;
 		if (!translations.contains(key))
 			return key;
 		else 
-			translations[key];
+			return translations[key];
 	}
 
 }
