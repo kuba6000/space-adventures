@@ -9,10 +9,13 @@
 #include "InputHelper.h"
 #include "editor.h"
 #include "Assets.h"
+#include "TranslationManager.h"
 
 using namespace GigaGra;
 
 int main() {
+
+    setlocale(LC_ALL, "pl-PL");
 
     sf::RenderWindow window(sf::VideoMode(g.gameWidth, g.gameHeight), "gaming");
 	window.setVerticalSyncEnabled(true);
@@ -32,6 +35,8 @@ int main() {
     std::chrono::steady_clock::time_point frame_timing = std::chrono::steady_clock::now();
 
     g.window = &window;
+
+    Translations::load("assets\\Polish.lang");
 
     window.clear();
 

@@ -151,26 +151,26 @@ namespace GigaGra {
 		}
 		return false;
 	}
-	std::string Map::findInteractionHint(float x, float y)
+	std::wstring Map::findInteractionHint(float x, float y)
 	{
 		int tileX = floor(x / TILE_SIZE) + map0x;
 		int tileY = floor(y / TILE_SIZE) + map0y;
 		if (tileX < 0 || tileX >= width || tileY < 0 || tileY >= height) {
-			return "";
+			return L"";
 		}
-	outer: for (int x = -1; x <= 1; x++)
-	{
-		for (int y = -1; y <= 1; y++) {
-			Tile* tile = getTile(tileX + x, tileY + y);
-			if (tile) {
-				std::string hint = tile->getInteractionHint();
-				if (hint != "") {
-					return hint;
+		for (int x = -1; x <= 1; x++)
+		{
+			for (int y = -1; y <= 1; y++) {
+				Tile* tile = getTile(tileX + x, tileY + y);
+				if (tile) {
+					std::wstring hint = tile->getInteractionHint();
+					if (hint != L"") {
+						return hint;
+					}
 				}
 			}
 		}
-	}
-	return "";
+		return L"";
 	}
 	void Map::draw(float x, float y, float frame_delta)
 	{

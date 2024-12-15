@@ -9,6 +9,7 @@
 #include "menu.h"
 #include "UI.h"
 #include <format>
+#include "TranslationManager.h"
 
 namespace GigaGra {
 
@@ -20,6 +21,8 @@ namespace GigaGra {
     bool isInControlPanel = false;
     int isInMerchant = 0;
     int travelTime = 0;
+    float prolog = -1.f;
+    float ending = -1.f;
     struct Bullet {
         sf::RectangleShape shape;
         sf::Vector2f vel;
@@ -35,13 +38,13 @@ namespace GigaGra {
         sf::Vector2f viewSize;
     } leavingEnteringData;
 
-	std::string planetNames[] = {
-		"Abos",
-		"Kelvion",
-		"Apra",
-		"Izarvis",
-        "Genope",
-        "Struxuzuno"
+	std::wstring planetNames[] = {
+		L"Abos",
+		L"Kelvion",
+		L"Apra",
+		L"Izarvis",
+        L"Genope",
+        L"Struxuzuno"
 	};
 
 
@@ -94,11 +97,11 @@ namespace GigaGra {
 
 
 
-    std::string shipUpgradeName[] = {
-        "Laser cannon",
-        "Fuel factory",
-		"Shield generator",
-		"Hyperdrive",
+    std::wstring shipUpgradeName[] = {
+        L"lasercannon",
+        L"fuelfactory",
+        L"shieldgenerator",
+        L"hyperdrive",
     };
 
     void setupLeavingDataForEntering() {
@@ -248,6 +251,16 @@ namespace GigaGra {
                 }
             }
             else if (event.key.code == sf::Keyboard::Q) {
+#ifdef _DEBUG
+				playerData.coins += 1000;
+				playerData.parts1 += 5;
+				playerData.parts2 += 5;
+				playerData.parts3 += 5;
+				playerData.parts4 += 5;
+#endif
+            }
+            else if (event.key.code == sf::Keyboard::Space) {
+                prolog = -1.f;
             }
             break;
         }
@@ -265,6 +278,78 @@ namespace GigaGra {
     }
     void Game::render(float frame_delta)
     {
+
+        if (ending >= 200.f) {
+            ending += frame_delta;
+            if (ending < 1200.f) {
+                sf::Text t{ T(L"ending1"), ui->Roboto };
+                t.setFillColor(sf::Color::White);
+                t.setPosition(g.gameWidth / 2 - t.getLocalBounds().width / 2, g.gameHeight / 2 - t.getLocalBounds().height / 2);
+                g.window->draw(t);
+                sf::RectangleShape blackBox = sf::RectangleShape(sf::Vector2f(g.gameWidth, g.gameHeight));
+                blackBox.setPosition(0, 0);
+                blackBox.setSize({ g.gameWidth, g.gameHeight });
+                if (ending < 1000.f) {
+                    blackBox.setFillColor(sf::Color(0, 0, 0, 255 - (int)(fminf(((ending - 200.f) / 200.f), 1.f) * 255.f)));
+                }
+                else
+                {
+                    blackBox.setFillColor(sf::Color(0, 0, 0, (int)(fminf(((ending - 1000.f) / 200.f), 1.f) * 255.f)));
+                }
+                g.window->draw(blackBox);
+            }
+            else {
+                g.gameState = 0;
+            }
+            return;
+        }
+        if (prolog >= 0.f) {
+			sf::Text t{ T(L"spaceskip"), ui->Roboto };
+			t.setFillColor(sf::Color::White);
+			t.setPosition(g.gameWidth / 2 - t.getLocalBounds().width / 2, g.gameHeight - 50);
+			g.window->draw(t);
+            prolog += frame_delta;
+            if (prolog < 1500.f) {
+                sf::Text t{ T(L"prologue1"), ui->Roboto };
+                t.setFillColor(sf::Color::White);
+                t.setPosition(g.gameWidth / 2 - t.getLocalBounds().width / 2, g.gameHeight / 2 - t.getLocalBounds().height / 2);
+                g.window->draw(t);
+                sf::RectangleShape blackBox = sf::RectangleShape(sf::Vector2f(g.gameWidth, g.gameHeight));
+                blackBox.setPosition(0, 0);
+                blackBox.setSize({ g.gameWidth, g.gameHeight });
+                if (prolog < 1300.f) {
+                    blackBox.setFillColor(sf::Color(0, 0, 0, 255 - (int)(fminf((prolog / 200.f), 1.f) * 255.f)));
+                }
+                else
+                {
+                    blackBox.setFillColor(sf::Color(0, 0, 0, (int)(fminf(((prolog - 1300.f) / 200.f), 1.f) * 255.f)));
+                }
+                g.window->draw(blackBox);
+            }
+            else if(prolog < 3000.f) {
+                sf::Text t{ T(L"prologue2"), ui->Roboto };
+                t.setFillColor(sf::Color::White);
+                t.setPosition(g.gameWidth / 2 - t.getLocalBounds().width / 2, g.gameHeight / 2 - t.getLocalBounds().height / 2);
+                g.window->draw(t);
+                sf::RectangleShape blackBox = sf::RectangleShape(sf::Vector2f(g.gameWidth, g.gameHeight));
+                blackBox.setPosition(0, 0);
+                blackBox.setSize({ g.gameWidth, g.gameHeight });
+                if (prolog < 2800.f) {
+                    blackBox.setFillColor(sf::Color(0, 0, 0, 255 - (int)(fminf(((prolog - 1500.f) / 200.f), 1.f) * 255.f)));
+                }
+                else
+                {
+                    blackBox.setFillColor(sf::Color(0, 0, 0, (int)(fminf(((prolog - 2800.f) / 200.f), 1.f) * 255.f)));
+                }
+                g.window->draw(blackBox);
+            }
+            else {
+                prolog = -1.f;
+            }
+			return;
+        }
+
+
 
         if (isInControlPanel) {
             static const sf::Color bgColor = { 19, 25, 36 };
@@ -284,19 +369,19 @@ namespace GigaGra {
             s.setSize({ 20, g.gameHeight - 40 });
             g.window->draw(s);
             float y = 0;
-            if (menu->button({ "Info", ui->Roboto }, { 25, y += 25 })) {
+            if (menu->button({ T(L"info"), ui->Roboto }, { 25, y += 25 })) {
                 currentMenu = 0;
             }
-            if (menu->button({ "Space map", ui->Roboto }, { 25, y += 35 })) {
+            if (menu->button({ T(L"spacemap"), ui->Roboto}, {25, y += 35})) {
                 currentMenu = 1;
             }
-            if (menu->button({ "Exit", ui->Roboto }, { 25, y += 35 })) {
+            if (menu->button({ T(L"exit"), ui->Roboto}, {25, y += 35})) {
                 isInControlPanel = false;
             }
 
             if (currentMenu == 0) {
                 y = 0;
-                sf::Text t{"Info", ui->Roboto};
+                sf::Text t{ T(L"info"), ui->Roboto};
                 t.setLetterSpacing(2);
 				t.setStyle(sf::Text::Bold);
                 t.setPosition(225, y += 25);
@@ -304,9 +389,9 @@ namespace GigaGra {
                 t.setLetterSpacing(1);
                 t.setStyle(sf::Text::Regular);
                 if (!activeMap)
-                    t.setString(std::string("You are currently in space"));
+                    t.setString(T(L"inspace"));
                 else
-                    t.setString(std::string("Current planet: ").append(planetNames[activeMapIndex]));
+                    t.setString(std::wstring(T(L"currentplanet")).append(planetNames[activeMapIndex]));
                 t.setPosition(225, y += 35);
                 g.window->draw(t);
             }
@@ -316,7 +401,7 @@ namespace GigaGra {
 				s.setSize({ g.gameWidth - 240, g.gameHeight - 40 });
 				g.window->draw(s);
 				y = 0;
-				sf::Text t{ "Space map", ui->Roboto };
+				sf::Text t{ T(L"spacemap"), ui->Roboto };
                 t.setLetterSpacing(2);
                 t.setStyle(sf::Text::Bold);
 				t.setPosition(225, y += 25);
@@ -383,7 +468,7 @@ namespace GigaGra {
                     }
 
 
-                    t.setString(std::string(planetNames[hoveredPlanet])); 
+                    t.setString(std::wstring(planetNames[hoveredPlanet])); 
                     t.setLetterSpacing(2);
 					t.setStyle(sf::Text::Bold);
                     if (hoveredPlanet == 5)
@@ -393,18 +478,18 @@ namespace GigaGra {
                     g.window->draw(t);
 					t.setFillColor(sf::Color::White);
                     if (hoveredPlanet == 0) {
-                        t.setString(std::string("Your home\n").append(activeMapIndex == hoveredPlanet ? "You are here" : "Click to travel"));
+                        t.setString(std::wstring(T(L"yourhome")).append(L"\n").append(activeMapIndex == hoveredPlanet ? T(L"youarehere") : T(L"clicktotravel")));
                     }
                     else {
 						if (shipUpgradeLevel < hoveredPlanet - 1) {
-							t.setString(std::string("Requires: ").append(shipUpgradeName[hoveredPlanet - 2]));
+							t.setString(std::wstring(T(L"requires")).append(T(shipUpgradeName[hoveredPlanet - 2])));
 							t.setFillColor(sf::Color::Red);
 						}
 						else {
 							if (activeMapIndex == hoveredPlanet)
-								t.setString("You are here");
+								t.setString(T(L"youarehere"));
 							else
-							    t.setString("Click to travel");
+							    t.setString(T(L"clicktotravel"));
 						}
                     }
                     t.setLetterSpacing(1);
@@ -440,7 +525,7 @@ namespace GigaGra {
 			float y = 0;
 			if (menu->button({ isInMerchant == 1 ? "Jack" : "L", ui->Roboto}, {25, y += 25})) {
 			}
-			if (menu->button({ "Exit", ui->Roboto }, { 25, y += 35 })) {
+			if (menu->button({ T(L"exit"), ui->Roboto}, {25, y += 35})) {
                     
 				isInMerchant = 0;
 			}
@@ -453,16 +538,16 @@ namespace GigaGra {
 			t.setLetterSpacing(1);
 			t.setStyle(sf::Text::Regular);
             if (isInMerchant == 1)
-			    t.setString("Hello! I am Jack The Weaponary Trader,\n How can I help you today?");
+			    t.setString(T(L"jacktext"));
             else if(isInMerchant == 2)
-                t.setString("Hello! I am L The Engineer,\n How can I help you today?");
+                t.setString(T(L"ltext"));
 			t.setPosition(225, y += 35);
 			g.window->draw(t);
             if (isInMerchant == 1) {
                 sf::Text t{ "", ui->Roboto };
                 int lvl = bulletDamageLevel();
 				int nextUpgradeCost = 100 + lvl * 100;
-                t.setString(std::format("Bullet damage [{}/5]: {} coins", lvl, nextUpgradeCost));
+                t.setString(TF(L"jackupgrade1", lvl, nextUpgradeCost));
                 if (lvl >= 5) t.setFillColor(sf::Color::Green);
                 else if (playerData.coins < nextUpgradeCost) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
@@ -474,7 +559,7 @@ namespace GigaGra {
                 }
                 lvl = armorDamageLevel();
                 nextUpgradeCost = 100 + lvl * 200;
-                t.setString(std::format("Armor damage [{}/5]: {} coins", lvl, nextUpgradeCost));
+                t.setString(TF(L"jackupgrade2", lvl, nextUpgradeCost));
                 if (lvl >= 5) t.setFillColor(sf::Color::Green);
                 else if (playerData.coins < nextUpgradeCost) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
@@ -486,7 +571,7 @@ namespace GigaGra {
                 }
                 lvl = playerArmorLevel();
                 nextUpgradeCost = 200 + lvl * 200;
-                t.setString(std::format("Your armor [{}/5]: {} coins", lvl, nextUpgradeCost));
+                t.setString(TF(L"jackupgrade3", lvl, nextUpgradeCost));
                 if (lvl >= 5) t.setFillColor(sf::Color::Green);
                 else if (playerData.coins < nextUpgradeCost) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
@@ -498,7 +583,7 @@ namespace GigaGra {
                 }
                 lvl = criticalChanceLevel();
                 nextUpgradeCost = 300 + lvl * 300;
-                t.setString(std::format("Critical chance [{}/5]: {} coins", lvl, nextUpgradeCost));
+                t.setString(TF(L"jackupgrade4", lvl, nextUpgradeCost));
                 if (lvl >= 5) t.setFillColor(sf::Color::Green);
                 else if (playerData.coins < nextUpgradeCost) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
@@ -510,7 +595,7 @@ namespace GigaGra {
                 }
                 lvl = shieldPiercingLevel();
                 nextUpgradeCost = 10000 + lvl * 10000;
-                t.setString(std::format("Critical chance [{}/5]: {} coins", lvl, nextUpgradeCost));
+                t.setString(TF(L"jackupgrade5", lvl, nextUpgradeCost));
                 if (lvl >= 5) t.setFillColor(sf::Color::Green);
                 else if (playerData.coins < nextUpgradeCost) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
@@ -522,7 +607,7 @@ namespace GigaGra {
                 }
                 lvl = shieldProtectionLevel();
                 nextUpgradeCost = 10000 + lvl * 10000;
-                t.setString(std::format("Shield protection [{}/5]: {} coins", lvl, nextUpgradeCost));
+                t.setString(TF(L"jackupgrade6", lvl, nextUpgradeCost));
                 if (lvl >= 5) t.setFillColor(sf::Color::Green);
                 else if (playerData.coins < nextUpgradeCost) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
@@ -535,48 +620,53 @@ namespace GigaGra {
 			}
             else if (isInMerchant == 2) {
                 sf::Text t{"", ui->Roboto};
-                t.setString("Laser cannon: 100 coins + 5 laser parts");
+                int parts = 5;
+                int coins = 100;
+                t.setString(TF(L"lupgrade1", coins, parts));
 				if (shipUpgradeLevel >= 1) t.setFillColor(sf::Color::Green);
-				else if (playerData.parts1 < 5 || playerData.coins < 100) t.setFillColor(sf::Color::Red);
+				else if (playerData.parts1 < parts || playerData.coins < coins) t.setFillColor(sf::Color::Red);
 				else t.setFillColor(sf::Color::White);
                 if (menu->button(t, { 225, y += 35 + 35 })) {
-                    if (shipUpgradeLevel == 0 && playerData.parts1 >= 5 && playerData.coins >= 100) {
+                    if (shipUpgradeLevel == 0 && playerData.parts1 >= parts && playerData.coins >= coins) {
                         shipUpgradeLevel++;
-                        playerData.parts1 -= 5;
-						playerData.coins -= 100;
+                        playerData.parts1 -= parts;
+						playerData.coins -= coins;
                     }
                 }
-                t.setString("Fuel factory: 500 coins + 5 fuel factory parts");
+                coins = 500;
+                t.setString(TF(L"lupgrade2", coins, parts));
                 if (shipUpgradeLevel >= 2) t.setFillColor(sf::Color::Green);
-                else if (playerData.parts2 < 5 || playerData.coins < 500) t.setFillColor(sf::Color::Red);
+                else if (playerData.parts2 < parts || playerData.coins < coins) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
                 if (menu->button(t, { 225, y += 35 + 35 })) {
-                    if (shipUpgradeLevel == 1 && playerData.parts2 >= 5 && playerData.coins >= 500) {
+                    if (shipUpgradeLevel == 1 && playerData.parts2 >= parts && playerData.coins >= coins) {
                         shipUpgradeLevel++;
-                        playerData.parts2 -= 5;
-                        playerData.coins -= 500;
+                        playerData.parts2 -= parts;
+                        playerData.coins -= coins;
                     }
                 }
-                t.setString("Shield generator: 800 coins + 5 shield parts");
+                coins = 800;
+                t.setString(TF(L"lupgrade3", coins, parts));
                 if (shipUpgradeLevel >= 3) t.setFillColor(sf::Color::Green);
-                else if (playerData.parts3 < 5 || playerData.coins < 800) t.setFillColor(sf::Color::Red);
+                else if (playerData.parts3 < parts || playerData.coins < coins) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
                 if (menu->button(t, { 225, y += 35 + 35 })) {
-                    if (shipUpgradeLevel == 2 && playerData.parts3 >= 5 && playerData.coins >= 800) {
+                    if (shipUpgradeLevel == 2 && playerData.parts3 >= parts && playerData.coins >= coins) {
                         shipUpgradeLevel++;
-                        playerData.parts3 -= 5;
-                        playerData.coins -= 800;
+                        playerData.parts3 -= parts;
+                        playerData.coins -= coins;
                     }
                 }
-                t.setString("Hyperdrive: 20000 coins + 5 hyperdrive parts");
+                coins = 20000;
+                t.setString(TF(L"lupgrade4", coins, parts));
                 if (shipUpgradeLevel >= 4) t.setFillColor(sf::Color::Green);
-                else if (playerData.parts4 < 5 || playerData.coins < 20000) t.setFillColor(sf::Color::Red);
+                else if (playerData.parts4 < parts || playerData.coins < coins) t.setFillColor(sf::Color::Red);
                 else t.setFillColor(sf::Color::White);
                 if (menu->button(t, { 225, y += 35 + 35 })) {
-                    if (shipUpgradeLevel == 3 && playerData.parts4 >= 5 && playerData.coins >= 20000) {
+                    if (shipUpgradeLevel == 3 && playerData.parts4 >= parts && playerData.coins >= coins) {
                         shipUpgradeLevel++;
-                        playerData.parts4 -= 5;
-                        playerData.coins -= 20000;
+                        playerData.parts4 -= parts;
+                        playerData.coins -= coins;
                     }
                 }
             }
@@ -586,7 +676,7 @@ namespace GigaGra {
 
         static float timer = 0.f;
         if (playerData.hp <= 0) {
-            sf::Text t{ "You died! Loading last save in a few seconds", ui->Roboto };
+            sf::Text t{ T(L"youdied"), ui->Roboto};
             t.setFillColor(sf::Color::Red);
             t.setPosition(g.gameWidth / 2 - t.getLocalBounds().width / 2, g.gameHeight / 2 - t.getLocalBounds().height / 2);
             g.window->draw(t);
@@ -697,7 +787,7 @@ namespace GigaGra {
                 e.pos += moveByFD;
                 e.sprite.setPosition(e.pos);
                 if (enemiesAttack) {
-                    if (e.type == 2) {
+                    if (e.type == 2 || e.type == 6) {
                         // create bullet
 						sf::RectangleShape shape = sf::RectangleShape({ 5, 5 });
 						shape.setOrigin({ 2.5, 2.5 });
@@ -727,6 +817,26 @@ namespace GigaGra {
                         sf::Vector2f vel = moveBy * 3.f;
                         bullets.push_back({ shape, vel, true, 5 });
                     }
+                    if (e.type == 5 && t2 % 4 == 0) {
+                        // create bullet
+                        sf::RectangleShape shape = sf::RectangleShape({ 5, 5 });
+                        shape.setOrigin({ 2.5, 2.5 });
+                        shape.setRotation(RAD_TO_DEG(rotation));
+                        shape.setFillColor(sf::Color::Red);
+                        shape.setPosition(e.pos);
+                        sf::Vector2f vel = moveBy * 1.5f;
+                        bullets.push_back({ shape, vel, true, 5 });
+                    }
+                    if (e.type == 7 && t2 % 6 == 0) {
+                        // create bullet
+                        sf::RectangleShape shape = sf::RectangleShape({ 5, 5 });
+                        shape.setOrigin({ 2.5, 2.5 });
+                        shape.setRotation(RAD_TO_DEG(rotation));
+                        shape.setFillColor(sf::Color::Red);
+                        shape.setPosition(e.pos);
+                        sf::Vector2f vel = moveBy * 5.f;
+                        bullets.push_back({ shape, vel, true, 5 });
+                    }
 				}
 
                 for (int j = 0; j < bullets.size(); j++) {
@@ -737,22 +847,31 @@ namespace GigaGra {
                         if (e.type == 4) {
                             armor = 5;
                         }
+                        if (e.type == 5) {
+                            armor = 20;
+                        }
+                        if (e.type == 6) {
+                            armor = 40;
+                        }
+                        if (e.type == 7) {
+                            armor = 90;
+                        }
                         int dmg = pow(2, bulletDamageLevel());
                         armor -= 5 * armorDamageLevel();
                         if (armor > 0 && rand() % 100 < armor)
                         {
-                            sf::Text t{ "Armor Blocked!", ui->Roboto };
+                            sf::Text t{ T(L"armorblocked"), ui->Roboto};
                             t.setFillColor(sf::Color::Magenta);
                             pushFloatingText(t, b.shape.getPosition(), 30);
                             dmg = 0;
                         }
 						else if (rand() % 100 < 2 * criticalChanceLevel()) {
 							dmg *= 10;
-                            sf::Text t{ "Critical hit!", ui->Roboto };
+                            sf::Text t{ T(L"critical"), ui->Roboto };
                             t.setFillColor(sf::Color::Red);
 							pushFloatingText(t, b.shape.getPosition(), 30);
 						}
-                        else pushFloatingText({ "Hit!", ui->Roboto }, b.shape.getPosition(), 20);
+                        else pushFloatingText({ T(L"hit"), ui->Roboto }, b.shape.getPosition(), 20);
                         e.hp -= dmg;
                         bullets.erase(bullets.begin() + j);
                         j--;
@@ -763,7 +882,10 @@ namespace GigaGra {
                             if (e.type == 2) p.val = 3;
                             if (e.type == 3) p.val = 15;
                             if (e.type == 4) p.val = 50;
-                            if (rand() % 100 < 5) {
+                            if (e.type == 5) p.val = 50;
+                            if (e.type == 6) p.val = 80;
+                            if (e.type == 7) p.val = 200;
+                            if (rand() % 100 < (e.type == 7 ? 40 : 5)) {
                                 if (e.type == 0) {
                                     p.type = 1;
                                     p.sprite.setTexture(assets->shipPart1Texture);
@@ -776,7 +898,7 @@ namespace GigaGra {
 									p.type = 3;
 									p.sprite.setTexture(assets->shipPart3Texture);
 								}
-								else if (e.type == 5) {
+								else if (e.type == 7) {
 									p.type = 4;
 									p.sprite.setTexture(assets->shipPart4Texture);
 								}
@@ -805,27 +927,27 @@ namespace GigaGra {
             if (p.sprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds())) {
 				sf::Text t = sf::Text("", ui->Roboto);
                 if (p.type == 0) {
-					t.setString(std::format("+{} coins", p.val));
+					t.setString(TF(L"+coins", p.val));
                     t.setFillColor(sf::Color::Yellow);
                     playerData.coins += p.val;
                 }
                 else if (p.type == 1) {
-					t.setString("+1 Laser cannon part");
+					t.setString(std::wstring(L"+1 ").append(T(L"lasercannon")).append(T(L"part")));
                     t.setFillColor(sf::Color::Red);
                     playerData.parts1 += 1;
                 }
 				else if (p.type == 2) {
-					t.setString("+1 Fuel factory part");
+                    t.setString(std::wstring(L"+1 ").append(T(L"fuelfactory")).append(T(L"part")));
 					t.setFillColor(sf::Color::Red);
 					playerData.parts2 += 1;
 				}
                 else if (p.type == 3) {
-                    t.setString("+1 Shield generator part");
+                    t.setString(std::wstring(L"+1 ").append(T(L"shieldgenerator")).append(T(L"part")));
                     t.setFillColor(sf::Color::Red);
                     playerData.parts3 += 1;
                 }
                 else if (p.type == 4) {
-                    t.setString("+1 Hyperdrive part");
+                    t.setString(std::wstring(L"+1 ").append(T(L"hyperdrive")).append(T(L"part")));
                     t.setFillColor(sf::Color::Red);
                     playerData.parts4 += 1;
                 }
@@ -893,7 +1015,11 @@ namespace GigaGra {
             travelTime -= 1.f * frame_delta;
 
             if (travelTime <= 0 && nextMapIndex != -1) {
-                travelTo(nextMapIndex);
+                if (nextMapIndex == 5)
+                {
+					nextMapIndex = -1;
+                    ending = 0.f;
+                }
             }
             else {
                 static std::vector<std::pair<sf::Vector2f, float>> stars{};
@@ -986,16 +1112,28 @@ namespace GigaGra {
                             e.hp = 10;
                         }
                     }
+                    else if (activeMapIndex == 4) {
+                        e.sprite.setTexture(assets->lodowlocznikTexture);
+                        e.type = 5;
+                        e.hp = 10;
+                        if (rand() % 100 < 40)
+                        {
+                            e.sprite.setTexture(assets->cirlTexture);
+                            e.type = 6;
+                            e.hp = 20;
+                        }
+                        if (rand() % 100 < 5)
+                        {
+                            e.sprite.setTexture(assets->plujekTexture);
+                            e.type = 7;
+                            e.hp = 100;
+                        }
+                    }
                     enemies.push_back(e);
                 }
             }
         }
         
-
-        sf::Vector2f gameViewSize = gameView.getSize();
-        sf::Vector2f gameViewCenter = gameView.getCenter();
-        sf::FloatRect gameViewPort = sf::FloatRect(gameViewCenter.x - gameViewSize.x / 2.f, gameViewCenter.y - gameViewSize.y / 2.f, gameViewSize.x, gameViewSize.y);
-
         //std::cout << gameViewSize.x << " " << gameViewSize.y << std::endl;
         
         map.draw(0,0, frame_delta);
@@ -1081,11 +1219,11 @@ namespace GigaGra {
 
         if (activeMap)
         {
-            std::string hint = activeMap->findInteractionHint(playerPos.x, playerPos.y);
-            if (hint == "")
+            std::wstring hint = activeMap->findInteractionHint(playerPos.x, playerPos.y);
+            if (hint == L"")
 				hint = map.findInteractionHint(playerPos.x, playerPos.y);
-            if (hint != "") {
-                sf::Text t{ hint, ui->Roboto };
+            if (hint != L"") {
+                sf::Text t{ T(hint), ui->Roboto };
                 t.setCharacterSize(18);
                 t.setStyle(sf::Text::Bold);
                 t.setFillColor(sf::Color::White);
@@ -1127,7 +1265,7 @@ namespace GigaGra {
 		t.setFillColor(sf::Color::White);
         g.window->draw(t);
 
-		t.setString("Coins");
+		t.setString(T(L"coins"));
         t.setPosition(130, g.gameHeight - 38);
         g.window->draw(t);
         sf::Text d {std::to_string(playerData.coins),  ui->Roboto };
@@ -1140,26 +1278,26 @@ namespace GigaGra {
 
         int x = 200;
 
-        std::string partName = "";
+        std::wstring partName = L"";
         sf::Color partColor{};
 		int partCount = 0;
 		if (shipUpgradeLevel == 0) {
-			partName = "Laser parts";
+			partName = T(L"laserparts");
 			partColor = sf::Color::Red;
 			partCount = playerData.parts1;
 		}
 		else if (shipUpgradeLevel == 1) {
-			partName = "Fuel factory parts";
+			partName = T(L"fuelfactoryparts");
 			partColor = sf::Color::Green;
 			partCount = playerData.parts2;
 		}
 		else if (shipUpgradeLevel == 2) {
-			partName = "Shield parts";
+			partName = T(L"shieldparts");
 			partColor = sf::Color::Blue;
 			partCount = playerData.parts3;
 		}
 		else if (shipUpgradeLevel == 3) {
-			partName = "Hyperdrive parts";
+			partName = T(L"hyperdriveparts");
 			partColor = sf::Color::Yellow;
 			partCount = playerData.parts4;
 		}
@@ -1176,26 +1314,36 @@ namespace GigaGra {
         // player upgrades
 
 		d.setPosition(x, g.gameHeight - 38);
-		d.setString(std::format("Bullet damage: {}", pow(2, bulletDamageLevel())));
+        int _ = pow(2, bulletDamageLevel());
+		d.setString(TF(L"bulletdamageui", _));
 		d.setFillColor(sf::Color::White);
 		g.window->draw(d);
         d.setPosition(x, g.gameHeight - 22);
-        d.setString(std::format("Armor damage: {}", pow(2, armorDamageLevel()) - 1));
+        _ = pow(2, armorDamageLevel()) - 1;
+        d.setString(TF(L"armordamageui", _));
         d.setFillColor(sf::Color::White);
         g.window->draw(d);
-		x += 160;
+		x += 250;
 
         d.setPosition(x, g.gameHeight - 38);
-        d.setString(std::format("Armor: {}% dmg reduction", 15 * playerArmorLevel()));
+        _ = 15 * playerArmorLevel();
+        d.setString(TF(L"armorui", _));
         d.setFillColor(sf::Color::White);
         g.window->draw(d);
         d.setPosition(x, g.gameHeight - 22);
-        d.setString(std::format("Critical hit: {}% chance", 2 * criticalChanceLevel()));
+        _ = 2 * criticalChanceLevel();
+        d.setString(TF(L"criticalui", _));
         d.setFillColor(sf::Color::White);
         g.window->draw(d);
         x += 160;
 
 
+        if (ending >= 0.f) {
+			ending += frame_delta;
+            sf::RectangleShape s{ {g.gameWidth, g.gameHeight} };
+            s.setFillColor(sf::Color(0, 0, 0, 255.f * (ending / 200.f)));
+            g.window->draw(s);
+        }
     }
 
     bool Game::isInSpace()
@@ -1227,11 +1375,13 @@ namespace GigaGra {
 		}
 		file.write(buffer, len);
 
-        pushFloatingText({ "Saved!", ui->Roboto }, playerPos, 100);
+        pushFloatingText({ T(L"saved"), ui->Roboto }, playerPos, 100);
     }
 
     bool Game::load()
     {
+        prolog = -1.f;
+        ending = -1.f;
         activeMap = &map2;
         activeMapIndex = 0;
         nextMapIndex = -1;
@@ -1275,6 +1425,8 @@ namespace GigaGra {
 
     void Game::newGame()
     {
+        prolog = -1.f;
+        ending = -1.f;
         activeMap = &map2;
         activeMapIndex = 0;
         nextMapIndex = -1;
@@ -1297,6 +1449,8 @@ namespace GigaGra {
         playerData.parts2 = 0;
         playerData.parts3 = 0;
         playerData.parts4 = 0;
+
+        prolog = 0;
     }
 
     void Game::pushFloatingText(sf::Text text, sf::Vector2f pos, float time)

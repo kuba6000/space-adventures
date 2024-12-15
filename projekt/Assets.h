@@ -49,6 +49,9 @@ namespace GigaGra {
 		sf::Texture ironManTexture{};
 		sf::Texture krzakorTexture{};
 		sf::Texture patyczakTexture{};
+		sf::Texture lodowlocznikTexture{};
+		sf::Texture plujekTexture{};
+		sf::Texture cirlTexture{};
 		sf::Texture coinTexture{};
 		sf::Texture shipPart1Texture{};
 		sf::Texture shipPart2Texture{};

@@ -15,7 +15,7 @@ namespace GigaGra{
 
 		virtual bool isWalkable() const { return true; };
 		virtual bool onInteract(Map* map, int x, int y, void* passingData) { return false; };
-		virtual std::string getInteractionHint() const { return ""; };
+		virtual std::wstring getInteractionHint() const { return L""; };
 	};
 
 }

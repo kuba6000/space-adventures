@@ -7,6 +7,7 @@
 #include <iostream>
 #include "game.h"
 #include <Windows.h>
+#include "TranslationManager.h"
 
 namespace GigaGra {
 	Menu::Menu()
@@ -79,35 +80,44 @@ namespace GigaGra {
 
 		if (menuState == 0) {
 
-			if (buttonCentered({ "Continue", font }, { x, y += h + 5 })) {
+			if (buttonCentered({ T(L"continue"), font}, {x, y += h + 5})) {
 				if (!game->load()) {
-					MessageBox(nullptr, L"No savefile", L"Error", MB_OK);
+					MessageBox(nullptr, T_(L"nosavefile"), T_(L"error"), MB_OK);
 				}
 				else {
 					g.gameState = 1;
 				}
 			}
-			if (buttonCentered({ "New game", font }, { x, y += h + 5 })) {
+			if (buttonCentered({ T(L"newgame"), font }, { x, y += h + 5 })) {
 				game->newGame();
 				g.gameState = 1;
 			}
-			if (buttonCentered({ "Settings", font }, { x, y += h + 5 })) {
+			if (buttonCentered({ T(L"settings"), font }, { x, y += h + 5 })) {
 				menuState = 1;
 			}
-			if (buttonCentered({ "Map Editor", font }, { x, y += h + 5 })) {
+			if (buttonCentered({ T(L"mapeditor"), font }, { x, y += h + 5 })) {
 				g.gameState = 2;
 			}
-			if (buttonCentered({ "Exit", font }, { x, y += h + 5 })) {
+			if (buttonCentered({ T(L"exit"), font }, { x, y += h + 5 })) {
 				g.window->close();
+			}
+
+			static std::string languages[] = {"assets\\Polish.lang", "assets\\English.lang"};
+			if (buttonCentered({ L"Language", font }, { x, y += h + 5 })) {
+				static int lang = 0;
+				lang++;
+				if (lang > 1)
+					lang = 0;
+				Translations::load(languages[lang]);
 			}
 
 		}
 		else if (menuState == 1) {
-			checkBoxCentered({ "Show FPS", font }, { x, y += h + 5 }, &settings->showFPS);
-			if (checkBoxCentered({ "Vertical Sync", font }, { x, y += h + 5 }, &settings->VSync)) {
+			checkBoxCentered({ T(L"showfps"), font }, { x, y += h + 5 }, &settings->showFPS);
+			if (checkBoxCentered({ T(L"vsync"), font }, { x, y += h + 5 }, &settings->VSync)) {
 				g.window->setVerticalSyncEnabled(settings->VSync);
 			}
-			if (checkBoxCentered({ "Fullscreen", font }, { x, y += h + 5 }, &settings->fullscreen)) {
+			if (checkBoxCentered({ T(L"fullscreen"), font }, { x, y += h + 5 }, &settings->fullscreen)) {
 				if (settings->fullscreen) {
 					g.window->create(sf::VideoMode(g.gameWidth, g.gameHeight), "gaming", sf::Style::Fullscreen);
 				}
@@ -115,10 +125,10 @@ namespace GigaGra {
 					g.window->create(sf::VideoMode(g.gameWidth, g.gameHeight), "gaming");
 				}
 			}
-			if (silderIntCentered({ "FPS Limit", ui->Roboto }, { x, y += h + 5 }, &settings->maxFPS, 30, 500)) {
+			if (silderIntCentered({ T(L"fpslimit"), ui->Roboto }, { x, y += h + 5 }, &settings->maxFPS, 30, 500)) {
 				g.window->setFramerateLimit(settings->maxFPS);
 			}
-			if (button({ "Back", ui->Roboto }, { x, y += h + 5 })) {
+			if (button({ T(L"back"), ui->Roboto }, { x, y += h + 5 })) {
 				menuState = 0;
 			}
 		}

@@ -51,6 +51,9 @@ namespace GigaGra {
 		tryLoad(&ironManTexture, "assets\\ironman.png");
 		tryLoad(&krzakorTexture, "assets\\krzakor.png");
 		tryLoad(&patyczakTexture, "assets\\patyczak.png");
+		tryLoad(&lodowlocznikTexture, "assets\\lodowlocznik.png");
+		tryLoad(&plujekTexture, "assets\\plujek.png");
+		tryLoad(&cirlTexture, "assets\\cirl.png");
 		tryLoad(&treeTexture, "assets\\tree.png");
 		tryLoad(&woodTexture, "assets\\wood.png");
 		tryLoad(&waterTexture, "assets\\water.png");

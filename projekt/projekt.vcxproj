@@ -102,7 +102,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -120,7 +120,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -157,6 +157,7 @@
     <ClCompile Include="Snow.cpp" />
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="TranslationManager.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="Snow.h" />
     <ClInclude Include="Stone.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="TranslationManager.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Utils.h" />
